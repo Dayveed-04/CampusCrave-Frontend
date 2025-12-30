@@ -43,9 +43,9 @@ export default function LandingPage() {
       <SearchBar></SearchBar>
 
       <BaseInput placeholder="password " className="mx-20"></BaseInput>
-       <Column className="gap-4">
-      <Button className="my-3">log in</Button>
-      <Button className="my-3">Register</Button>
+       <Column className="space-y-4 my-5">
+      <Button >log in</Button>
+      <Button>Register</Button>
       </Column>
   
 
