@@ -10,8 +10,13 @@ import { SearchBar } from "@/components/searchBar";
 
 export default function LandingPage() {
   return (
-    <div className="my-5">
-      Hello world!
+  
+    
+
+    <div>
+      <h1 className="text-lg font-bold drop-shadow-md">Campus</h1>
+      <h1>Crave</h1>
+        Hello world!
       <Button>Click me </Button>
 
       <Card>My name is David</Card>
@@ -30,12 +35,20 @@ export default function LandingPage() {
           Green Button
         </Button>
       </Column>
-
-      <BaseInput placeholder="Enter your name" className="my-5"></BaseInput>
+       
+      <BaseInput placeholder="Your email" className="my-5 w-40"></BaseInput>
       
       <BaseTextArea></BaseTextArea>
 
       <SearchBar></SearchBar>
+
+      <BaseInput placeholder="password " className="mx-20"></BaseInput>
+       <Column className="gap-4">
+      <Button className="my-3">log in</Button>
+      <Button className="my-3">Register</Button>
+      </Column>
+  
+
     </div>
   );
 }
