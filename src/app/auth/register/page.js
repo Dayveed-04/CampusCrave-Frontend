@@ -19,7 +19,7 @@ export default function Register() {
                alt="Search"
                width={15}
                height={15}
-               onClick={()=>router.back('/auth')}
+               onClick={()=>router.push('/auth')}
               />
       </div>
 
