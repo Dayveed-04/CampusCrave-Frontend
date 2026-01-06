@@ -1,20 +1,29 @@
-import React from 'react';
+"use client";
 
 export function BaseInput({ 
-  icon: Icon,      // React component for icon (optional)
-  placeholder = '', 
-  className = '', 
+  icon, 
+  type = "text", 
+  placeholder = "", 
+  className = "", 
   ...props 
 }) {
   return (
-    <div className={`flex items-center bg-[#F2F2F8] rounded-md border border-gray-300 px-2 py-1 w-70 ${className}`}>
-      {/* Left Icon (optional) */}
-      {Icon && <Icon className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" aria-hidden="true" />}
-      
-      {/* Input Field */}
+    <div className="relative w-full">
+      {icon && (
+        <div className="absolute left-3 top-1/2 -translate-y-1/2">
+          {icon}
+        </div>
+      )}
       <input
-        className="flex-grow font-poppins font-thin text-base leading-normal bg-transparent outline-none truncate"
+        type={type}
         placeholder={placeholder}
+        className={`
+          w-full py-3 pr-4 text-sm placeholder:text-xs
+          bg-white rounded-lg
+          focus:outline-none focus:ring-2 focus:ring-gray-300
+          ${icon ? "pl-10" : "pl-4"}
+          ${className}
+        `}
         {...props}
       />
     </div>

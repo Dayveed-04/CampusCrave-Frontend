@@ -1,28 +1,47 @@
+"use client";
+
+import Button from "@/components/button";
+import { images } from "@/constants/image";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 
 export default function PreAuth() {
+
+  const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col items-center px-8 py-6 font-sans">
-
-      {/* Header */}
       <div className="mt-2">
-        <h4 className="font-bold text-black text-base">
+        <h2 className="font-bold text-black text-3xl">
           Campus Crave
-        </h4>
+        </h2>
       </div>
 
-      {/* Image */}
-      <div className="mt-8 w-52 h-52 rounded-full overflow-hidden">
-        <img 
-          src="/images/food.jpg" 
-          alt="Food" 
-          className="w-full h-full object-cover"
-        />
-      </div>
+      <div className="mt-5 relative w-[150px] h-[150px]">
+        <Image
+          src={images.onboardingFood}
+          alt="Search"
+          width={150}
+          height={150}
+       />
 
-      {/* Text Content */}
+        {/* Top Right */}
+        <div className="absolute top-0 right-0 w-10 h-10">
+          <Image src={images.edgeImage2} alt="Edge 2" width={30} height={20} />
+        </div>
+
+        {/* Bottom Left */}
+        <div className="absolute bottom-0 left-0 w-10 h-10">
+          <Image src={images.edgeImage1} alt="Edge 3" width={30} height={30} />
+        </div>
+
+        {/* Bottom Right */}
+        <div className="absolute bottom-0 right-0 w-10 h-10">
+          <Image src={images.edgeImage3} alt="Edge 4" width={30} height={20} />
+        </div>
+      </div>
       <div className="mt-6 text-center">
-        <h2 className="text-2xl font-bold text-black leading-tight">
+        <h2 className="text-2xl font-extrabold font-sans text-black leading-tight">
           All your <br /> favorite foods
         </h2>
         <p className="mt-2 text-xs text-black opacity-60 leading-relaxed">
@@ -30,14 +49,14 @@ export default function PreAuth() {
         </p>
       </div>
 
-      {/* Buttons */}
+    
       <div className="mt-12 mb-6 w-full max-w-sm space-y-3">
-        <button className="w-full py-3.5 bg-black text-white rounded-2xl font-medium hover:bg-gray-900 transition duration-300">
+        <Button onClick={()=>router.push('/auth/login')}>
           Sign In
-        </button>
-        <button className="w-full py-3.5 bg-black text-white rounded-2xl font-medium hover:bg-gray-900 transition duration-300">
+        </Button>
+        <Button onClick={()=>router.push('/auth/register')}>
           Register
-        </button>
+        </Button>
       </div>
       
     </div>
