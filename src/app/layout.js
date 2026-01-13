@@ -2,8 +2,6 @@ import "./globals.css";
 import { Pacifico } from 'next/font/google';
 import "./globals.css";
 
-import "./globals.css";
-
 {/*const inter = Inter({
   subsets: ['latin'],
   variable: '--font-rounded',
@@ -18,8 +16,8 @@ const pacifico = Pacifico(
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={pacifico.variable}>
+    <html lang="en" className={pacifico.variable}>
+      <body >
         {children}
       </body>
     </html>

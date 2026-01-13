@@ -11,7 +11,7 @@ export default function LandingPage() {
     setAnimate(true);
     const timer = setTimeout(() => {
       router.push("/auth");
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [router]);

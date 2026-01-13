@@ -1,13 +1,13 @@
-//  Student routes 
-//  Student Layout(with navbar)
+import StudentNavigation from "@/components/navigations/StudentNavigation";
+
 
 export default function StudentLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-      >
+    <div className="min-h-screen ">
+      <main className="pb-20">
         {children}
-      </body>
-    </html>
+      </main>
+      <StudentNavigation/>
+    </div>
   );
 }

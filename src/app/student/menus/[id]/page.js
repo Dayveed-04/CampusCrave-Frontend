@@ -7,7 +7,7 @@
 export default function StudentVendorsMenu(){
     return(
         <div>
-            Hello
+            A Menu
         </div>
     )
 }

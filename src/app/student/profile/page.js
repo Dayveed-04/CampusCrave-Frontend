@@ -7,7 +7,7 @@
 export default function StudentProfile(){
     return(
         <div>
-            Hello
+            Profile
         </div>
     )
 }
