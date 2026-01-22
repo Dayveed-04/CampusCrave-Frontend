@@ -1,24 +1,35 @@
 "use client";
 
+import { images } from "@/constants/image";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("cart");
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Your Orders</h1>
-
-      
-      <div className="flex space-x-4 border-b border-gray-300 mb-6">
+    <div className="min-h-screen ">
+      <div className="w-full  flex flex-row pr-2 mb-1 mt-1">
+        <div className="text-black self-start cursor-pointer ">
+         <Image
+            src={images.icons.backArrow}
+            alt="Logo"
+            width={25}
+            height={25}
+          />
+         </div>
+         <h2 className="text-2xl font-semibold text-center w-full mr-6 text-base">Orders</h2>
+      </div>
+      <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
+      <div className="flex justify-around gap-x-3">
         {["cart", "ongoing", "completed"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-2 font-semibold ${
+            className={`px-4  border rounded-xl transition-all ${
               activeTab === tab
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-gray-600 hover:text-blue-600"
+                ? "bg-black text-[#FFFCE2] border-black"
+                : "bg-[#FFFCE2] text-black border-[#FFFCE2] "
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}

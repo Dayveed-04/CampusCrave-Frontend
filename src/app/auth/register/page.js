@@ -12,7 +12,6 @@ export default function Register() {
   return (
     <div className="min-h-screen flex flex-col px-6 pt-12 pb-6 font-sans flex items-center">
       <div className="w-full max-w-sm ">
-      {/* Back button */}
       <div className="mb-4 text-black self-start cursor-pointer">
             <Image
                src={images.icons.backArrow}

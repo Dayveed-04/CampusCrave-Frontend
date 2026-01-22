@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Menu, ShoppingBag, User } from 'lucide-react';
+import { images } from '@/constants/image';
 
 const StudentNavigation = () => {
   const pathname = usePathname();
@@ -11,22 +12,22 @@ const StudentNavigation = () => {
     {
       name: 'Home',
       href: '/student/dashboard',
-      icon: Home,
+      icon: images.icons.HomeIcon,
     },
     {
       name: 'Menu',
       href: '/student/menus',
-      icon: Menu,
+      icon: images.icons.MenuIcon,
     },
     {
       name: 'Orders',
       href: '/student/orders',
-      icon: ShoppingBag,
+      icon: images.icons.OrderIcon,
     },
     {
       name: 'Profile',
       href: '/student/profile',
-      icon: User,
+      icon: images.icons.ProfileIcon,
     },
   ];
 
@@ -47,7 +48,12 @@ const StudentNavigation = () => {
                   : 'text-gray-600'
               }`}
             >
-              <Icon size={15} className={isActive ? 'stroke-2' : ''} />
+              <img 
+                src={item.icon} 
+                alt={`${item.name} icon`} 
+                className={`w-6 h-6 ${isActive ? 'filter brightness-0 saturate-100' : 'opacity-60'}`} 
+              />
+
               <span className="text-xs font-medium">{item.name}</span>
               {isActive && (
                 <div className="absolute bottom-0 w-12 h-1 bg-black rounded-t-full" />
