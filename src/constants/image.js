@@ -1,5 +1,4 @@
 
-
 export const images = {
 onboardingFood: '/images/onboardingFood.svg',
 edgeImage1: '/images/onboardingBottomLeft.svg',
@@ -18,5 +17,6 @@ icons:{
     Logo: '/images/Logo.svg',
     LocationIcon: '/images/Location.svg',
     NotificationIcon: '/images/Notification.svg',
+    TrashIcon: '/images/trash.svg',
 }
 };

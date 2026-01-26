@@ -40,9 +40,6 @@ const foodItems = [
 
 
 
-
-
-
 export default function StudentAllVendorsMenu(){
     return(
         <div className="min-h-screen  font-sans">
