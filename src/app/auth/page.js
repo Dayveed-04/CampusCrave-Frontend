@@ -25,17 +25,14 @@ export default function PreAuth() {
           height={150}
        />
 
-        {/* Top Right */}
         <div className="absolute top-0 right-0 w-10 h-10">
           <Image src={images.edgeImage2} alt="Edge 2" width={30} height={20} />
         </div>
 
-        {/* Bottom Left */}
         <div className="absolute bottom-0 left-0 w-10 h-10">
           <Image src={images.edgeImage1} alt="Edge 3" width={30} height={30} />
         </div>
 
-        {/* Bottom Right */}
         <div className="absolute bottom-0 right-0 w-10 h-10">
           <Image src={images.edgeImage3} alt="Edge 4" width={30} height={20} />
         </div>
