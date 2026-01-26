@@ -1,10 +1,11 @@
-import { HomeIcon } from "lucide-react";
+
 
 export const images = {
 onboardingFood: '/images/onboardingFood.svg',
 edgeImage1: '/images/onboardingBottomLeft.svg',
 edgeImage2: '/images/onboardingTopRight.svg',
 edgeImage3: '/images/onboardingBottomRight.svg',
+jollofRice: '/images/jollofRice.svg',
 
 
 
