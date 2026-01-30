@@ -47,7 +47,7 @@ export default function StudentDashboard(){
     const [activeCategory, setActiveCategory] = useState('All');
     return(
         <div className="min-h-screen  font-sans">
-            <div className="w-full  flex flex-row pr-2">
+            <div className="w-full  flex flex-row pr-4">
                 <div className="text-black self-start cursor-pointer">
                     <Image
                           src={images.icons.Logo}

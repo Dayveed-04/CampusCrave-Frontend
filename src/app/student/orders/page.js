@@ -10,6 +10,14 @@ import { useState } from "react";
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("My cart");
 
+  const steps = [
+    { time: "10:25pm", label: "Order Placed", done: true },
+    { time: "10:30pm", label: "Order Confirmed", done: true },
+    { time: "10:40pm", label: "Order Pending", done: true },
+    { time: "11:00pm", label: "Delivering", done: true },
+    { time: "11:30pm", label: "Delivered", done: false },
+  ];
+
   return (
     <div className="min-h-screen ">
       <div className="w-full  flex flex-row mb-1 mt-1">
@@ -24,7 +32,7 @@ export default function OrdersPage() {
          <h2 className="text-2xl font-semibold text-center w-full  text-base">Orders</h2>
       </div>
       <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
-      <Row gap="gap-2" className="  flex px-3 justify-between items-center ">
+      <Row gap="gap-2" className="  px-3   " justifyContent="between">
         {["My cart", "Ongoing", "Completed"].map((tab) => (
                  <Button
                         key={tab}
@@ -35,7 +43,7 @@ export default function OrdersPage() {
                         onClick={() => setActiveTab(tab)}
                       >
                         {tab}
-                      </Button>
+                  </Button>
         ))}
       </Row>
 
@@ -62,9 +70,9 @@ export default function OrdersPage() {
                  </div>
 
                  <div className="flex items-center gap-3">
-                   <Button className="!w-1 !h-1 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">−</Button>
+                   <button className="!w-5 !h-5 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">−</button>
                    <span className="text-xs">1</span>
-                   <Button className="!w-1 !h-1 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">+</Button>
+                   <button className="!w-5 !h-5 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">+</button>
                  </div>
                 </div>
 
@@ -133,7 +141,7 @@ export default function OrdersPage() {
             <div className="px-4 py-3">
               <h2 className="text-sm font-bold mb-2 font-sans">Order details</h2>
             </div>
-            <div className="bg-[#FFFCE2]">
+            <Column>
               <Row className="flex space-x-3 items-center px-3 py-2">
                 <span className="text-xs">10:25pm</span>
                 <Image
@@ -184,7 +192,7 @@ export default function OrdersPage() {
                  />
                 <span className="text-xs font-semibold font-medium">Delivered</span>
               </Row>
-            </div>
+            </Column>
           </div>
         )}
 
@@ -198,3 +206,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+

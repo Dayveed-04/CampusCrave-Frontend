@@ -43,7 +43,7 @@ const foodItems = [
 export default function StudentAllVendorsMenu(){
     return(
         <div className="min-h-screen  font-sans">
-            <div className="w-full  flex flex-row pr-2 mb-1 mt-2">
+            <div className="w-full  flex flex-row pr-2 ">
                 <div className="text-black self-start cursor-pointer ">
                     <Image
                         src={images.icons.backArrow}
@@ -58,12 +58,12 @@ export default function StudentAllVendorsMenu(){
 
             <Column gap="gap-3 sm:gap-4" className="max-w-4xl mx-auto px-2 sm:px-4 pt-4">
                 <h2 className="text-lg sm:text-xl font-bold text-black">Choose <br/>Your Favorite Food </h2> 
-                <div className="px-4 sm:px-6 py-4">
+                <div className="px-4 sm:px-6 py-2">
                     <SearchBar
                         className="max-w-md mx-auto"
                         placeholder="Search for food,vendors..." />
                 </div>
-                <div className="grid grid-cols-2 pt-4 gap-2 sm:gap-4">
+                <div className="grid grid-cols-2 gap-2 sm:gap-4">
                     {foodItems.map((item) => (
                     <div key={item.id} className=" overflow-hidden p-0">
                         <Column gap="gap-2 sm:gap-3">

@@ -1,15 +1,26 @@
 // Vendor Menu 
-
+"use client";
 import Button from "@/components/button";
 import { Column, Row } from "@/components/flex";
+import { CheckButton } from "@/components/checkButton";
 import { images } from "@/constants/image";
 import Image from "next/image";
+import { useState } from "react";
 
 
 
 
 
 export default function StudentVendorsMenu(){
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const handleToggle = (option) => {
+  setSelectedOptions(prev => 
+    prev.includes(option) 
+      ? prev.filter(item => item !== option) // Remove if already selected
+      : [...prev, option] // Add if not selected
+  );
+};
     return(
         <div className="min-h-screen  font-sans">
             <div className="w-full  flex flex-row  mt-4">
@@ -22,7 +33,7 @@ export default function StudentVendorsMenu(){
                     />
                     </div>
                 <h2 className="text-2xl font-semibold text-center w-full mr-6 text-base">Babcock Guest House</h2>
-                <div className=" text-black cursor-pointer">
+                <div className=" text-black cursor-pointer pr-3">
                     <Image
                         src={images.icons.OrderIcon}
                         alt="Location"
@@ -31,7 +42,7 @@ export default function StudentVendorsMenu(){
                     />
                 </div>
             </div>
-            <div className="w-full h-px bg-gray-400 mb-4"></div>
+            <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
             <div className="px-3 mb-1">
                 <div className="flex gap-3">
                     <Image
@@ -48,9 +59,9 @@ export default function StudentVendorsMenu(){
                             <div className="flex justify-between items-center">
                                 <h3 className="py-3 font-bold text-medium">$4.00</h3>
                                 <div className="flex items-center gap-3">
-                                    <Button className="!w-1 !h-1 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">−</Button>
+                                    <button className="!w-5 !h-5 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">−</button>
                                     <span className="text-xs">1</span>
-                                    <Button className="!w-1 !h-1 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">+</Button>
+                                    <button className="!w-5 !h-5 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400">+</button>
                                 </div>
                             </div>
                         </div>
@@ -58,70 +69,108 @@ export default function StudentVendorsMenu(){
                     </div>
                 </div>
             </div>
-            <div className="w-full h-px bg-gray-500 mb-1"></div>
+            <div className="w-full h-px bg-gray-500 opacity-30 mb-1"></div>
             <div>
                 <h3 className="px-3 py-1 font-bold text-xs">Choose Protein</h3>
             </div>
             <div className="bg-[#FFFCE2] mb-4">
-                <div>
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Tofu</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Tofu</span>
+                    <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">+$1.50</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('tofu')}>
+                            <CheckButton selected={selectedOptions.includes('tofu')} />
+                        </div>
                     </div>
+                </Row>
 
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Fish</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Fish</span>
+                    <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">+$2.00</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('fish')}>
+                            <CheckButton selected={selectedOptions.includes('fish')} />
+                        </div>
                     </div>
+                </Row>
 
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Meat</span>
-                        <span className="text-xs font-medium">+$2.00</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Meat</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium">+$2.50</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('meat')}>
+                            <CheckButton selected={selectedOptions.includes('meat')} />
+                        </div>
                     </div>
+                </Row>
 
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Turkey</span>
-                        <span className="text-xs font-medium">+$2.00</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Egg</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium">+$1.50</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('egg')}>
+                            <CheckButton selected={selectedOptions.includes('egg')} />
+                        </div>
                     </div>
-                </div>
+                </Row>
             </div>
             <div>
                 <h3 className="px-3 py-1 font-bold text-xs">Choose Toppings</h3>
             </div>
             <div className="bg-[#FFFCE2] mb-4">
-                <div>
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Plantain</span>
-                        <span className="text-xs font-medium">+$0.36</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Plantain</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium">+$0.86</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('plantain')}>
+                            <CheckButton selected={selectedOptions.includes('plantain')} />
+                        </div>
                     </div>
+                </Row>
 
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Salad</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Salad</span>
+                    <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">+$0.80</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('salad')}>
+                            <CheckButton selected={selectedOptions.includes('salad')} />
+                        </div>
                     </div>
-                </div>
+                </Row>
             </div>
             <div>
                 <h3 className="px-3 py-1 font-bold text-xs">Choose Drinks</h3>
             </div>
             <div className="bg-[#FFFCE2] mb-4">
-                <div>
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Coke</span>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Sprite</span>
+                    <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">+$2.00</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('sprite')}>
+                            <CheckButton selected={selectedOptions.includes('sprite')} />
+                        </div>
                     </div>
-
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Fanta</span>
+                </Row>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Coke</span>
+                    <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">+$2.00</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('coke')}>
+                            <CheckButton selected={selectedOptions.includes('coke')} />
+                        </div>
                     </div>
-                    <div className="flex justify-between items-center pr-7 px-3 py-2">
-                        <span className="text-xs">Sprite</span>
+                </Row>
+                <Row className="items-center  px-3 py-2" justifyContent="between">
+                    <span className="text-xs">Fanta</span>
+                    <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">+$2.00</span>
+                        <div className="cursor-pointer" onClick={() => handleToggle('fanta')}>
+                            <CheckButton selected={selectedOptions.includes('fanta')} />
+                        </div>
                     </div>
-                </div>
+                </Row>
             </div>
-            <div className="w-full h-px bg-gray-500"></div>
+            <div className="w-full h-px  opacity-30 bg-gray-400"></div>
             <div className="flex justify-between items-center px-2 py-2">
                 <h2 className="px-3 py-1 font-bold text-medium">Total: $8.00</h2>
                 <div>
