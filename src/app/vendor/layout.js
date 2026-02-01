@@ -1,13 +1,16 @@
 // Vendor routes and layout
 
 
-export default function VendorLayout({ children }) {
+import VendorNavigation from "@/components/navigations/VendorNavigation";
+
+
+export default function StudentLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-      >
+    <div className="min-h-screen ">
+      <main className="pb-20">
         {children}
-      </body>
-    </html>
+      </main>
+      <VendorNavigation/>
+    </div>
   );
 }

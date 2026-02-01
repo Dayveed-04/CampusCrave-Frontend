@@ -36,8 +36,8 @@ export default function OrdersPage() {
         {["My cart", "Ongoing", "Completed"].map((tab) => (
                  <Button
                         key={tab}
-                        backgroundColor={activeTab === tab ? 'bg-black' : 'bg-white'}
-                        color={activeTab === tab ? 'text-white' : 'text-black'}
+                        backgroundColor={activeTab === tab ? 'bg-black' : 'bg-[#FFFCE2]'}
+                        color={activeTab === tab ? 'text-[#EDE7B5]' : 'text-black'}
                         width="auto"
                         className="whitespace-nowrap !px-4 !py-1 text-md !rounded-3xl"
                         onClick={() => setActiveTab(tab)}
