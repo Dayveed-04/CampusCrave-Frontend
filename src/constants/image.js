@@ -30,5 +30,6 @@ icons:{
     DocumentIcon: '/images/faq.svg',
     RateIcon: '/images/star.svg',
     SignOutIcon: '/images/logout.svg',
+    AddCircleIcon: '/images/add-circle.svg',
 }
 };
