@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 
-export default function Register() {
+export default function StudentRegister() {
   const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col px-6 pt-12 pb-6 font-sans flex items-center">
@@ -59,7 +59,7 @@ export default function Register() {
         <BaseFieldSet className="mb-4">
         <label className="block text-sm font-semibold mb-2 text-black">Email</label>
         <BaseInput
-          type="tel"
+          type="email"
           placeholder="Email"
           icon={
             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ export default function Register() {
         <BaseFieldSet className="mb-4">
         <label className="block text-sm font-semibold mb-2 text-black">Password</label>
         <BaseInput
-          type="tel"
+          type="password"
           placeholder="Password"
           icon={
             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@ export default function Register() {
         <BaseFieldSet className="mb-4">
         <label className="block text-sm font-semibold mb-2 text-black">Confirm Password</label>
         <BaseInput
-          type="tel"
+          type="password"
           placeholder="Confirm Password"
           icon={
             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
