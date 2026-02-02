@@ -1,4 +1,5 @@
 import { Column, Row } from "@/components/flex";
+import ToggleButton from "@/components/toggleButton";
 import { images } from "@/constants/image";
 import Image from "next/image";
 
@@ -48,12 +49,7 @@ export default function StudentProfile(){
                     <span>Dark Mode</span>
                 </div>
                 <div className="ml-auto">
-                    <Image
-                    src={images.icons.DarkButtonIcon}
-                    alt="Logo"
-                    width={40}
-                    height={10}
-                />
+                    <ToggleButton/>
                 </div>
             </Row>
         </div>

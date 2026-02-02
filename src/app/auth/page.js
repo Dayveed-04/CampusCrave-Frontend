@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/button";
+import { Row } from "@/components/flex";
 import { images } from "@/constants/image";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -51,11 +52,20 @@ export default function PreAuth() {
         <Button onClick={()=>router.push('/auth/login')}>
           Sign In
         </Button>
-        <Button onClick={()=>router.push('/auth/register')}>
+        <Button onClick={()=>router.push('/auth/register/student')}>
           Register
-        </Button>
+        </Button>  
       </div>
-      
+      <div className="flex items-center w-full max-w-sm mt-5 gap-2">
+        <div className="flex-1 h-px bg-gray-400 opacity-50"></div>
+        <span className="text-xs text-black opacity-60 whitespace-nowrap">
+          Or continue as
+        </span>
+        <div className="flex-1 h-px bg-gray-400 opacity-50"></div>
+      </div>
+      <div className="mt-6 w-full max-w-sm">
+      <Button onClick={()=>router.push('/auth/register/vendor')}>Vendor</Button>
+      </div>   
     </div>
   );
 } 

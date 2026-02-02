@@ -32,5 +32,6 @@ icons:{
     SignOutIcon: '/images/logout.svg',
     GalleryIcon: '/images/galleryAdd.svg',
     EditIcon: '/images/edit.svg',
+    AddCircleIcon: '/images/add-circle.svg',
 }
 };
