@@ -26,10 +26,10 @@ export default function StudentVendorsMenu(){
             <div className="w-full  flex flex-row  mt-4">
                 <div className="text-black self-start cursor-pointer justify-between">
                     <Image
-                            src={images.icons.backArrow}
-                            alt="Logo"
-                            width={25}
-                            height={25}
+                        src={images.icons.backArrow}
+                        alt="Logo"
+                        width={25}
+                        height={25}
                     />
                     </div>
                 <h2 className="text-2xl font-semibold text-center w-full mr-6 text-base">Babcock Guest House</h2>
