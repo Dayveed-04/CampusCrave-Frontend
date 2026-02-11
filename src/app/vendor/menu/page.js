@@ -3,6 +3,7 @@
 import { BaseInput } from "@/components/baseInput";
 import Button from "@/components/button";
 import { Column, Row } from "@/components/flex";
+import ToggleButton from "@/components/toggleButton";
 import { images } from "@/constants/image";
 import Image from "next/image";
 import { useState } from "react";
@@ -44,7 +45,7 @@ export default function VendorManageMenu()
                 {activeTab === "All" && (
                     <div className="px-3 py-4 mb-6 font-sans">
                         <Column gap="gap-2">
-                            <Row justifyContent="between">
+                            <Row>
                                 <h2 className="text-sm font-bold">Main Course</h2>
                             </Row>
 
@@ -58,10 +59,15 @@ export default function VendorManageMenu()
                                             height={25}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <h2 className="text-sm font-bold">Jollof Rice</h2>
+                                    <Column className="space-y-3">
+                                        <Row justifyContent="end">
+                                            <h2 className="text-sm font-bold">Jollof Rice</h2>
+                                            <div className="ml-2">
+                                                <ToggleButton/>
+                                            </div>
+                                        </Row>
                                         <p className="text-xs opacity-70 font-semibold">$4.00</p>
-                                    </div>
+                                    </Column>
                                 </Row>
                                 <Row gap="gap-2">
                                     <Button className="!w-15 !h-5 !rounded-2xl !flex !items-center !justify-center !text-xs !bg-[#FFFCE2] !text-[#000000] space-x-1">
@@ -98,10 +104,13 @@ export default function VendorManageMenu()
                                             height={25}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <h2 className="text-sm font-bold">Rice and Beans</h2>
-                                        <p className="text-xs opacity-70 font-semibold">$4.00</p>
-                                    </div>
+                                    <Column className="space-y-3">
+                                        <Row justifyContent="end">
+                                            <h2 className="text-sm font-bold">Rice and Beans</h2>
+                                            <ToggleButton/>
+                                        </Row>
+                                        <p className="text-xs opacity-70 font-semibold">$4.00</p> 
+                                    </Column>
                                 </Row>
                                 <Row gap="gap-2">
                                     <Button className="!w-15 !h-5 !rounded-2xl !flex !items-center !justify-center !text-xs !bg-[#FFFCE2] !text-[#000000] space-x-1">
@@ -142,10 +151,13 @@ export default function VendorManageMenu()
                                             height={25}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <h2 className="text-sm font-bold">Meat</h2>
+                                    <Column className="space-y-3">
+                                        <Row justifyContent="end">
+                                            <h2 className="text-sm font-bold">Meat</h2>
+                                            <ToggleButton/>
+                                        </Row>
                                         <p className="text-xs opacity-70 font-semibold">$2.00</p>
-                                    </div>
+                                    </Column>
                                 </Row>
                                 <Row gap="gap-2">
                                     <Button className="!w-15 !h-5 !rounded-2xl !flex !items-center !justify-center !text-xs !bg-[#FFFCE2] !text-[#000000] space-x-1">
@@ -182,10 +194,13 @@ export default function VendorManageMenu()
                                             height={25}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <h2 className="text-sm font-bold">Tofu</h2>
+                                    <Column className="space-y-3">
+                                        <Row justifyContent="end">
+                                            <h2 className="text-sm font-bold">Tofu</h2>
+                                            <ToggleButton/>
+                                        </Row>
                                         <p className="text-xs opacity-70 font-semibold">$2.00</p>
-                                    </div>
+                                    </Column>
                                 </Row>
                                 <Row gap="gap-2">
                                     <Button className="!w-15 !h-5 !rounded-2xl !flex !items-center !justify-center !text-xs !bg-[#FFFCE2] !text-[#000000] space-x-1">
@@ -226,10 +241,13 @@ export default function VendorManageMenu()
                                             height={25}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <h2 className="text-sm font-bold">Meat</h2>
+                                    <Column className="space-y-3">
+                                        <Row justifyContent="end">
+                                            <h2 className="text-sm font-bold">Sprite</h2>
+                                            <ToggleButton/>
+                                        </Row>
                                         <p className="text-xs opacity-70 font-semibold">$2.00</p>
-                                    </div>
+                                    </Column>
                                 </Row>
                                 <Row gap="gap-2">
                                     <Button className="!w-15 !h-5 !rounded-2xl !flex !items-center !justify-center !text-xs !bg-[#FFFCE2] !text-[#000000] space-x-1">
@@ -266,10 +284,13 @@ export default function VendorManageMenu()
                                             height={25}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <h2 className="text-sm font-bold">Tofu</h2>
-                                        <p className="text-xs opacity-70 font-semibold">$2.00</p>
-                                    </div>
+                                    <Column className="space-y-3">
+                                        <Row justifyContent="end">
+                                            <h2 className="text-sm font-bold">Fanta</h2>
+                                            <ToggleButton/>
+                                        </Row>
+                                        <p className="text-xs opacity-70 font-semibold">$2.00</p> 
+                                    </Column>
                                 </Row>
                                 <Row gap="gap-2">
                                     <Button className="!w-15 !h-5 !rounded-2xl !flex !items-center !justify-center !text-xs !bg-[#FFFCE2] !text-[#000000] space-x-1">
