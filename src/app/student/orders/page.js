@@ -197,9 +197,30 @@ export default function OrdersPage() {
         )}
 
         {activeTab === "Completed" && (
-          <div>
+          <div className="font-sans px-3 py-3">
             {/* TODO: Completed orders content */}
-            <p>Your completed orders will appear here.</p>
+            <Column gap="gap-4">
+              <div className="bg-[#FFFCE2] rounded-2xl p-4 mr-1">
+                <Row justifyContent="between">
+                    <h3 className="font-bold text-sm">#ORD-OO1</h3>
+                    <div>
+                        <p className="text-xs mb-3">10:00pm</p>
+                    </div>
+                </Row>
+
+                <Row>
+                    <p className="text-xs opacity-70 mb-3">Babcock Guest House</p>
+                </Row>
+
+                <Row>
+                    <p className="text-sm font-semibold mb-6">1x Jollof rice, 1x Tofu and 1x Coke</p>
+                </Row>
+
+                <Row justifyContent="between">
+                    <h3 className="font-bold text-sm">$8.00</h3>
+                </Row>
+              </div>
+            </Column> 
           </div>
         )}
       </div>
