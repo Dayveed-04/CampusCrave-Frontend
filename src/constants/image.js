@@ -33,5 +33,6 @@ icons:{
     GalleryIcon: '/images/galleryAdd.svg',
     EditIcon: '/images/edit.svg',
     AddCircleIcon: '/images/add-circle.svg',
+    MoneyIcon: '/images/money.svg',
 }
 };

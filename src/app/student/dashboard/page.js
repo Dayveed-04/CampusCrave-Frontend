@@ -2,11 +2,12 @@
 import Button from "@/components/button";
 import { Column, Row } from "@/components/flex";
 import { images } from "@/constants/image";
+import { fetchCategories } from "@/utils/endpoints/Category/getCategories";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
-const categories = ['All', 'Rice', 'Meshai', 'Noodles'];
+
 
 const foodItems = [
   {
@@ -44,7 +45,30 @@ const foodItems = [
 ];
 
 export default function StudentDashboard(){
-    const [activeCategory, setActiveCategory] = useState('All');
+
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+    const loadCategories = async () => {
+      try {  
+        setLoading(true)
+        const response = await fetchCategories();
+        if (response.status && response.data.categories) {
+          setCategories(response.data.categories);  
+        } else if (Array.isArray(response)) {
+          setCategories(response);  
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+          setLoading(false);
+      }
+    };
+    
+    loadCategories();
+  }, []); 
     return(
         <div className="min-h-screen  font-sans">
             <div className="w-full  flex flex-row pr-4">
@@ -90,21 +114,26 @@ export default function StudentDashboard(){
             className="w-full h-full object-cover"
           />
         </div>
-
         <Row gap="gap-3 sm:gap-4" className="overflow-x-auto pb-2">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              backgroundColor={activeCategory === category ? 'bg-black' : 'bg-white'}
-              color={activeCategory === category ? 'text-[#EDE7B5]' : 'text-black'}
-              width="auto"
-              className="whitespace-nowrap px-4 sm:px-5 !py-1 text-xs sm:text-sm !rounded-3xl flex-shrink-0"
-              onClick={() => setActiveCategory(category)}
-            >
-              {category}
-            </Button>
-          ))}
-        </Row>
+            {loading ? (
+              <p>Loading categories...</p>
+            ) : categories.length > 0 ? (
+              categories.map((cat) => (
+                <Button
+                  key={cat.id}
+                  backgroundColor={selectedCategory?.id === cat.id ? 'bg-black' : 'bg-white'}
+                  color={selectedCategory?.id === cat.id ? 'text-[#EDE7B5]' : 'text-black'}
+                  width="auto"
+                  className="whitespace-nowrap px-4 sm:px-5 !py-1 text-xs sm:text-sm !rounded-3xl flex-shrink-0"
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat.name}
+                </Button>
+              ))
+            ) : (
+              <p>No categories available</p>
+            )}
+          </Row>
 
         <Column gap="gap-3 sm:gap-4">
           <h2 className="text-xl sm:text-2xl font-semibold text-black">Recommended</h2>

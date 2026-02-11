@@ -4,23 +4,28 @@ import { BaseFieldSet } from "@/components/baseField";
 import { BaseInput } from "@/components/baseInput";
 import Button from "@/components/button";
 import { Column, Row } from "@/components/flex";
+import OptionGroupsInline from "@/components/optionGroupsModal";
+import OptionGroupsModal from "@/components/optionGroupsModal";
+import { RadioButton } from "@/components/radioButton";
+import ToggleButton from "@/components/toggleButton";
 import { images } from "@/constants/image";
 import Image from "next/image";
 import { useState } from "react";
-import { CheckButton } from "@/components/checkButton";
+
 
 
 export default function VendorAddMenu()
 {
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedOption, setSelectedOption] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [optionGroups, setOptionGroups] = useState([]);
 
-    const handleToggle = (option) => {
-  setSelectedOptions(prev => 
-    prev.includes(option) 
-      ? prev.filter(item => item !== option) // Remove if already selected
-      : [...prev, option] // Add if not selected
-  );
-};
+    const handleSaveOptionGroups = (groups) => {
+    setOptionGroups(groups);
+    console.log('Saved option groups:', groups);
+  };
+
+  
     return (
         <div className="min-h-screen font-sans">
             <div className="w-full  flex flex-row mb-1 mt-1">
@@ -83,8 +88,11 @@ export default function VendorAddMenu()
                     <Row className="items-center px-3 py-2" justifyContent="between">
                         <span className="text-xs font-semibold">Main Course</span>
                         <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" onClick={() => handleToggle('tofu')}>
-                                <CheckButton selected={selectedOptions.includes('tofu')} />
+                            <div className="cursor-pointer" >
+                                <RadioButton 
+                                    selected={selectedOption === "b"}
+                                    onClick={() => setSelectedOption("b")}
+                                 />
                             </div>
                         </div>
                     </Row>
@@ -92,8 +100,9 @@ export default function VendorAddMenu()
                     <Row className="items-center px-3 py-2" justifyContent="between">
                         <span className="text-xs font-semibold">Appetizer</span>
                         <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" onClick={() => handleToggle('fish')}>
-                                <CheckButton selected={selectedOptions.includes('fish')} />
+                            <div className="cursor-pointer" >
+                                <RadioButton  selected={selectedOption === "c"}
+                                    onClick={() => setSelectedOption("c")} />
                             </div>
                         </div>
                     </Row>
@@ -101,8 +110,9 @@ export default function VendorAddMenu()
                     <Row className="items-center px-3 py-2" justifyContent="between">
                         <span className="text-xs font-semibold">Protein</span>
                         <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" onClick={() => handleToggle('meat')}>
-                                <CheckButton selected={selectedOptions.includes('meat')} />
+                            <div className="cursor-pointer" >
+                                <RadioButton  selected={selectedOption === "d"}
+                                    onClick={() => setSelectedOption("d")} />
                             </div>
                         </div>
                     </Row>
@@ -110,13 +120,32 @@ export default function VendorAddMenu()
                     <Row className="items-center px-3 py-2" justifyContent="between">
                         <span className="text-xs font-semibold">Drinks</span>
                         <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" onClick={() => handleToggle('egg')}>
-                                <CheckButton selected={selectedOptions.includes('egg')} />
+                            <div className="cursor-pointer" >
+                                <RadioButton selected={selectedOption === "e"}
+                                    onClick={() => setSelectedOption("e")} />
                             </div>
                         </div>
                     </Row>
                 </div>
+                <OptionGroupsInline
+                    optionGroups={optionGroups}
+                    setOptionGroups={setOptionGroups}
+                />
+                <div className="bg-[#FFFCE2] rounded-2xl p-4 w-72 mx-auto mt-7">
+                    <Row gap="gap-4"  justifyContent="between" >
+                        <h2 className="text-sm font-semibold">Store Status :<span className="ml-2 font-semibold">Open</span></h2>
+                        <ToggleButton/>
+                    </Row>
+                    <p className="text-xs text-gray-600">You are currently receiving new orders</p>
+                </div>
+                <div className="px-2 py-3 flex justify-center">
+                    <Button className="!w-70  bg-black !text-[#EDE7B5] !rounded-2xl font-bold !text-white">
+                        Add Meal to Menu
+                    </Button>
+                </div>
             </Column>
+            
+
         </div>
     )
 }

@@ -4,9 +4,6 @@ import { images } from "@/constants/image";
 import Image from "next/image";
 
 
-
-
-
 export default function VendorDashboard(){
     return(
         <div className="min-h-screen  font-sans">
@@ -60,6 +57,38 @@ export default function VendorDashboard(){
                 </Row>
                 <p className="text-xs text-gray-600">You are currently receiving new orders</p>
             </div>
+            <Row gap="gap-4" justifyContent="between" className="mt-4">
+                <div className="bg-[#FFFCE2] h-20 rounded-3xl px-3 py-2 w-60 space-y-3">
+                    <Row gap="gap-2" >
+                        <h2 className="text-xs font-semibold">Total Amount</h2>
+                            <Image
+                            src={images.icons.MoneyIcon}
+                            alt="Money Icon"
+                            width={70}
+                            height={70}
+                            className="w-5 h-5 sm:w-[70px] sm:h-[70px]"
+                        />
+                    </Row>
+                    <Row gap="gap-2" >
+                        <h2 className="text-xs font-bold">₦ 120,000</h2>
+                    </Row>
+                </div>
+                <div className="bg-[#FFFCE2] h-20 rounded-3xl px-3 py-2 w-60 space-y-3">
+                    <Row gap="gap-2" >
+                        <h2 className="text-xs font-semibold">Total Orders</h2>
+                            <Image
+                            src={images.icons.MoneyIcon}
+                            alt="Money Icon"
+                            width={70}
+                            height={70}
+                            className="w-5 h-5 sm:w-[70px] sm:h-[70px]"
+                        />
+                    </Row>
+                    <Row gap="gap-2" >
+                        <h2 className="text-xs font-bold">20</h2>
+                    </Row>
+                </div>
+            </Row>
             <div>
                 <h2 className="text-lg font-bold mt-2 mb-2">Quick Actions</h2>
                 <Row gap="gap-3">
