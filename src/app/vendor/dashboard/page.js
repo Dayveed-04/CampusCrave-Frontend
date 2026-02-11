@@ -38,7 +38,7 @@ export default function VendorDashboard(){
             </div>
             <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div> 
             <div className="px-3">
-            <div className=" py-2 font-sans flex gap-2 ">
+            <div className="py-2 font-sans flex gap-2 ">
                 <Image
                     src={images.profilePic}
                     alt="Profile Picture"
