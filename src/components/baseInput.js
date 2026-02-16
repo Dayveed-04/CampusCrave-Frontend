@@ -2,6 +2,9 @@
 
 export function BaseInput({ 
   icon, 
+  name,
+  value,
+  onChange,
   type = "text", 
   placeholder = "", 
   className = "", 
@@ -15,6 +18,9 @@ export function BaseInput({
         </div>
       )}
       <input
+        name={name}
+        value={value}
+        onChange={onChange}
         type={type}
         placeholder={placeholder}
         className={`

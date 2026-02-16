@@ -1,11 +1,10 @@
 
 export default function AdminLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-      >
+     <div className="min-h-screen ">
+      <main className="pb-20">
         {children}
-      </body>
-    </html>
+      </main>
+    </div>
   );
 }

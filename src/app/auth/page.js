@@ -6,16 +6,12 @@ import { images } from "@/constants/image";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-
 export default function PreAuth() {
-
   const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col items-center px-8 py-6 font-sans">
       <div className="mt-2">
-        <h2 className="font-bold text-black text-3xl">
-          Campus Crave
-        </h2>
+        <h2 className="font-bold text-black text-3xl">Campus Crave</h2>
       </div>
 
       <div className="mt-5 relative w-[150px] h-[150px]">
@@ -24,7 +20,7 @@ export default function PreAuth() {
           alt="Search"
           width={150}
           height={150}
-       />
+        />
 
         <div className="absolute top-0 right-0 w-10 h-10">
           <Image src={images.edgeImage2} alt="Edge 2" width={30} height={20} />
@@ -43,18 +39,16 @@ export default function PreAuth() {
           All your <br /> favorite foods
         </h2>
         <p className="mt-2 text-xs text-black opacity-60 leading-relaxed">
-          Order your favorite menu with easy <br />on-demand delivery
+          Order your favorite menu with easy <br />
+          on-demand delivery
         </p>
       </div>
 
-    
       <div className="mt-12 mb-6 w-full max-w-sm space-y-3">
-        <Button onClick={()=>router.push('/auth/login')}>
-          Sign In
-        </Button>
-        <Button onClick={()=>router.push('/auth/register/student')}>
+        <Button onClick={() => router.push("/auth/login")}>Sign In</Button>
+        <Button onClick={() => router.push("/auth/register/student")}>
           Register
-        </Button>  
+        </Button>
       </div>
       <div className="flex items-center w-full max-w-sm mt-5 gap-2">
         <div className="flex-1 h-px bg-gray-400 opacity-50"></div>
@@ -64,8 +58,10 @@ export default function PreAuth() {
         <div className="flex-1 h-px bg-gray-400 opacity-50"></div>
       </div>
       <div className="mt-6 w-full max-w-sm">
-      <Button onClick={()=>router.push('/auth/register/vendor')}>Vendor</Button>
-      </div>   
+        <Button onClick={() => router.push("/auth/register/vendor")}>
+          Vendor
+        </Button>
+      </div>
     </div>
   );
-} 
+}

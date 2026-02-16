@@ -5,20 +5,42 @@ import { BaseInput } from "@/components/baseInput";
 import Button from "@/components/button";
 import { Column, Row } from "@/components/flex";
 import OptionGroupsInline from "@/components/optionGroupsModal";
-import OptionGroupsModal from "@/components/optionGroupsModal";
 import { RadioButton } from "@/components/radioButton";
 import ToggleButton from "@/components/toggleButton";
 import { images } from "@/constants/image";
+import { fetchCategories } from "@/utils/endpoints/Category/getCategories";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
 export default function VendorAddMenu()
 {
     const [selectedOption, setSelectedOption] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [optionGroups, setOptionGroups] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadCategories = async () => {
+          try {  
+            setLoading(true)
+            const response = await fetchCategories();
+            if (response.status && response.data.categories) {
+              setCategories(response.data.categories);  
+            } else if (Array.isArray(response)) {
+              setCategories(response);  
+            }
+          } catch (error) {
+            console.error("Failed to fetch categories:", error);
+          } finally {
+              setLoading(false);
+          }
+        };
+        
+        loadCategories();
+      }, []); 
 
     const handleSaveOptionGroups = (groups) => {
     setOptionGroups(groups);
@@ -85,47 +107,30 @@ export default function VendorAddMenu()
 
                 <h2 className="font-bold px-4">Meal Category</h2>
                 <div className="bg-[#FFFFFF] rounded-2xl p-2 m-3">
-                    <Row className="items-center px-3 py-2" justifyContent="between">
-                        <span className="text-xs font-semibold">Main Course</span>
-                        <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" >
-                                <RadioButton 
-                                    selected={selectedOption === "b"}
-                                    onClick={() => setSelectedOption("b")}
-                                 />
-                            </div>
-                        </div>
-                    </Row>
-
-                    <Row className="items-center px-3 py-2" justifyContent="between">
-                        <span className="text-xs font-semibold">Appetizer</span>
-                        <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" >
-                                <RadioButton  selected={selectedOption === "c"}
-                                    onClick={() => setSelectedOption("c")} />
-                            </div>
-                        </div>
-                    </Row>
-
-                    <Row className="items-center px-3 py-2" justifyContent="between">
-                        <span className="text-xs font-semibold">Protein</span>
-                        <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" >
-                                <RadioButton  selected={selectedOption === "d"}
-                                    onClick={() => setSelectedOption("d")} />
-                            </div>
-                        </div>
-                    </Row>
-
-                    <Row className="items-center px-3 py-2" justifyContent="between">
-                        <span className="text-xs font-semibold">Drinks</span>
-                        <div className="flex items-center gap-2">
-                            <div className="cursor-pointer" >
-                                <RadioButton selected={selectedOption === "e"}
-                                    onClick={() => setSelectedOption("e")} />
-                            </div>
-                        </div>
-                    </Row>
+                    <Column gap="gap-3" className="items-center px-3 py-2" >
+                        {loading ? (
+                            <p>Loading categories...</p>
+                            ) : categories.length > 0 ? (
+                                categories.map((cat) => (
+                                <div
+                                    key={cat.id}
+                                    className="flex items-center justify-between w-full"
+                               >
+                                    <span className="text-xs font-semibold">
+                                        {cat.name}
+                                    </span>
+                                    <div className="cursor-pointer">
+                                        <RadioButton
+                                            selected={selectedOption === cat.id}
+                                            onClick={() => setSelectedOption(cat.id)}
+                                        />
+                                    </div>
+                                </div>
+                                ))
+                                 ) : (
+                                    <p>No categories available</p>
+                                )}
+                    </Column>
                 </div>
                 <OptionGroupsInline
                     optionGroups={optionGroups}
