@@ -1,17 +1,16 @@
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const payOrder = async (orderId, payment) => {
+export const payOrder = async (reference) => {
   try {
     const token = sessionStorage.getItem("token");
     const response = await fetch(
-      `${BASE_ENDPOINT}/api/payments/orders/${orderId}/pay`,
+      `${BASE_ENDPOINT}/api/payments/verify/${reference}`,
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payment),
+        }
       },
     );
 

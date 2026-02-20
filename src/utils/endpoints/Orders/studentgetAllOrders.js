@@ -1,9 +1,14 @@
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const fetchAllOrders = async () => {
+export const getStudentOrders = async () => {
   try {
     const token = sessionStorage.getItem("token");
-    const response = await fetch(`${BASE_ENDPOINT}/api/admin/orders`, {
+
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${BASE_ENDPOINT}/api/orders/student`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -15,7 +20,7 @@ export const fetchAllOrders = async () => {
 
     if (!response.ok) {
       console.error("Error:", res);
-      throw new Error(res.message || "Failed to fetch all orders");
+      throw new Error(res.message || "Failed to create menu");
     }
 
     return res;

@@ -2,33 +2,33 @@
 import { Column, Row } from "@/components/flex";
 import ToggleButton from "@/components/toggleButton";
 import { images } from "@/constants/image";
-import { getStudent } from "@/utils/endpoints/Students/getStudent";
+import { getAdmin } from "@/utils/endpoints/Admin/getAdmin";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function StudentProfile() {
-  const [student, setStudent] = useState({});
+export default function AdminProfile() {
+  const [admin, setAdmin] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadstudent = async () => {
+    const loadadmin = async () => {
       try {
         setLoading(true);
-        const response = await getStudent();
+        const response = await getAdmin();
 
-        if (response.status === "success" && response.data.student) {
-          setStudent(response.data.student);
+        if (response.status === "success" && response.data.admin) {
+          setAdmin(response.data.admin);
         }
       } catch (err) {
-        console.error("Failed to fetch student:", err);
+        console.error("Failed to fetch Admin:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    loadstudent();
+    loadadmin();
   }, []);
   return (
     <div className="min-h-screen  font-sans">
@@ -51,8 +51,8 @@ export default function StudentProfile() {
           <Image src={images.profilePic} alt="Logo" width={60} height={10} />
         </div>
         <Column>
-          <h2 className="text-lg font-semibold">{student?.name}</h2>
-          <p className="text-xs text-gray-600">{student?.email}</p>
+          <h2 className="text-lg font-semibold"> {admin?.name}</h2>
+          <p className="text-xs text-gray-600">{admin?.email}</p>
         </Column>
       </div>
       <div className="py-2">
@@ -81,7 +81,7 @@ export default function StudentProfile() {
             height={10}
           />
           <div>
-            <span>Payment Method</span>
+            <span>Wallet</span>
           </div>
         </Row>
       </div>

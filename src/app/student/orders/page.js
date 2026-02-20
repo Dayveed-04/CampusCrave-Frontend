@@ -2,12 +2,11 @@
 "use client";
 
 import { BaseInput } from "@/components/baseInput";
-
 import Button from "@/components/button";
 import { Column, Row } from "@/components/flex";
 import { images } from "@/constants/image";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   getCart,
@@ -18,48 +17,195 @@ import {
   formatCartForOrder,
 } from "@/utils/services/cartManagement";
 import { BaseFieldSet } from "@/components/baseField";
-import {
-  createOrder,
-  createOrders,
-} from "@/utils/endpoints/Orders/studentCreateOrder";
+import { getStudentOrders } from "@/utils/endpoints/Orders/studentgetAllOrders";
+import { trackStudentOrder } from "@/utils/endpoints/Orders/studentTrackOrder";
+import { createOrder } from "@/utils/endpoints/Orders/studentCreateOrder";
 import { payOrder } from "@/utils/endpoints/Payment/payOrder";
 
-export default function OrdersPage() {
-  const router = useRouter();
+const STATUS_STEPS = [
+  { key: "PAID", label: "Order Paid" },
+  { key: "CONFIRMED", label: "Order Confirmed" },
+  { key: "PREPARING", label: "Preparing" },
+  { key: "DELIVERING", label: "Out for Delivery" },
+  { key: "DELIVERED", label: "Delivered" },
+];
+
+const STATUS_ORDER = [
+  "PAID",
+  "CONFIRMED",
+  "PREPARING",
+  "DELIVERING",
+  "DELIVERED",
+];
+const ONGOING_STATUSES = ["PAID", "CONFIRMED", "PREPARING", "DELIVERING"];
+const COMPLETED_STATUSES = ["DELIVERED", "CANCELLED"];
+
+const formatTime = (dateString) => {
+  return new Date(dateString).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatFullDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const formatDateTime = (dateString) => {
+  return new Date(dateString).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+function TabInitializer({ setActiveTab }) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
 
-  const [activeTab, setActiveTab] = useState(tabParam || "My cart");
+  useEffect(() => {
+    if (tabParam) setActiveTab(tabParam);
+  }, [tabParam]);
+
+  return null;
+}
+
+// Reusable tracking timeline component
+function TrackingTimeline({ trackingData, currentStatus }) {
+  const getStepStatus = (stepKey, status) => {
+    if (status === "CANCELLED") return "cancelled";
+    const currentIndex = STATUS_ORDER.indexOf(status);
+    const stepIndex = STATUS_ORDER.indexOf(stepKey);
+    if (stepIndex <= currentIndex) return "done";
+    return "pending";
+  };
+
+  const getStepTimestamp = (stepKey, statusHistory) => {
+    if (!statusHistory) return null;
+    const record = statusHistory.find((h) => h.status === stepKey);
+    return record ? record.createdAt : null;
+  };
+
+  const status = trackingData?.status || currentStatus;
+  const history = trackingData?.statusHistory || [];
+
+  return (
+    <Column>
+      {STATUS_STEPS.map((step, index) => {
+        const stepStatus = getStepStatus(step.key, status);
+        const isDone = stepStatus === "done";
+        const timestamp = getStepTimestamp(step.key, history);
+
+        return (
+          <Row
+            key={index}
+            className="flex space-x-3 items-center px-1 py-3 border-b border-gray-100"
+          >
+            <div
+              className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                isDone ? "bg-black" : "bg-gray-300"
+              }`}
+            />
+            <div className="flex-1">
+              <span
+                className={`text-xs font-semibold ${
+                  isDone ? "text-black" : "text-gray-400"
+                }`}
+              >
+                {step.label}
+              </span>
+              {isDone && timestamp && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {formatDateTime(timestamp)}
+                </p>
+              )}
+            </div>
+            {isDone && <span className="text-xs text-gray-500">✓</span>}
+          </Row>
+        );
+      })}
+    </Column>
+  );
+}
+
+export default function OrdersPage() {
+  const router = useRouter();
+
+  const [activeTab, setActiveTab] = useState("My cart");
   const [cart, setCart] = useState(null);
   const [deliveryLocation, setDeliveryLocation] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  // Load cart on mount and when tab changes
+  const [ongoingOrders, setOngoingOrders] = useState([]);
+  const [completedOrders, setCompletedOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [trackingData, setTrackingData] = useState(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+
   useEffect(() => {
     if (activeTab === "My cart") {
       loadCart();
+    } else if (activeTab === "Ongoing" || activeTab === "Completed") {
+      loadOrders();
     }
   }, [activeTab]);
-
-  // Set active tab from URL param
-  useEffect(() => {
-    if (tabParam) {
-      setActiveTab(tabParam);
-    }
-  }, [tabParam]);
 
   const loadCart = () => {
     const currentCart = getCart();
     setCart(currentCart);
   };
 
+  const loadOrders = async () => {
+    try {
+      setOrdersLoading(true);
+      const response = await getStudentOrders();
+      if (response.status === "success") {
+        setOngoingOrders(
+          response.data.filter((o) => ONGOING_STATUSES.includes(o.status)),
+        );
+        setCompletedOrders(
+          response.data.filter((o) => COMPLETED_STATUSES.includes(o.status)),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to load orders:", error);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleTrackOrder = async (order) => {
+    setSelectedOrder(order);
+    setTrackingLoading(true);
+    try {
+      const response = await trackStudentOrder(order.id);
+      if (response.status === "success") {
+        setTrackingData(response.data.order);
+      }
+    } catch (error) {
+      console.error("Failed to track order:", error);
+    } finally {
+      setTrackingLoading(false);
+    }
+  };
+
+  const handleBackToOrders = () => {
+    setSelectedOrder(null);
+    setTrackingData(null);
+  };
+
   const handleQuantityChange = (itemIndex, change) => {
     const item = cart.items[itemIndex];
     const newQuantity = item.quantity + change;
-
     if (newQuantity < 1) return;
-
     updateCartItemQuantity(itemIndex, newQuantity);
     loadCart();
   };
@@ -72,21 +218,11 @@ export default function OrdersPage() {
     }
   };
 
-  const handleClearCart = () => {
-    const confirmed = confirm("Clear entire cart?");
-    if (confirmed) {
-      clearCart();
-      loadCart();
-    }
-  };
-
   const handleCheckout = async () => {
-    // Validation
     if (!cart || cart.items.length === 0) {
       alert("Your cart is empty");
       return;
     }
-
     if (!deliveryLocation.trim()) {
       alert("Please enter delivery location");
       return;
@@ -95,8 +231,6 @@ export default function OrdersPage() {
     setIsCheckingOut(true);
 
     try {
-      // Step 1: Create order
-      console.log("Creating order...");
       const orderData = formatCartForOrder(deliveryLocation, deliveryNotes);
       const orderResponse = await createOrder(orderData);
 
@@ -105,11 +239,10 @@ export default function OrdersPage() {
       }
 
       const orderId = orderResponse.data.id;
-      console.log("Order created:", orderId);
 
-      // Step 2: Initiate payment
-      console.log("Initiating payment...");
-      const paymentResponse = await payOrder(orderId);
+      const paymentResponse = await payOrder(orderId, {
+        callback_url: `${window.location.origin}/student/orders?tab=Ongoing`,
+      });
 
       if (
         !paymentResponse.status === "success" ||
@@ -118,9 +251,7 @@ export default function OrdersPage() {
         throw new Error("Failed to initiate payment");
       }
 
-      // Step 3: Clear cart and redirect to Paystack
       clearCart();
-      console.log("Redirecting to Paystack...");
       window.location.href = paymentResponse.data.authorizationUrl;
     } catch (error) {
       console.error("Checkout error:", error);
@@ -131,20 +262,16 @@ export default function OrdersPage() {
 
   const summary = getCartSummary();
 
-  const steps = [
-    { time: "10:25pm", label: "Order Placed", done: true },
-    { time: "10:30pm", label: "Order Confirmed", done: true },
-    { time: "10:40pm", label: "Order Pending", done: true },
-    { time: "11:00pm", label: "Delivering", done: true },
-    { time: "11:30pm", label: "Delivered", done: false },
-  ];
-
   return (
     <div className="min-h-screen">
+      <Suspense fallback={null}>
+        <TabInitializer setActiveTab={setActiveTab} />
+      </Suspense>
+
       <div className="w-full flex flex-row mb-1 mt-1">
         <div
           className="text-black self-start cursor-pointer"
-          onClick={() => router.back()}
+          onClick={selectedOrder ? handleBackToOrders : () => router.back()}
         >
           <Image
             src={images.icons.backArrow}
@@ -154,32 +281,33 @@ export default function OrdersPage() {
           />
         </div>
         <h2 className="text-2xl font-semibold text-center w-full text-base">
-          Orders
+          {selectedOrder ? "Track Order" : "Orders"}
         </h2>
       </div>
       <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
 
-      <Row gap="gap-2" className="px-3" justifyContent="between">
-        {["My cart", "Ongoing", "Completed"].map((tab) => (
-          <Button
-            key={tab}
-            backgroundColor={activeTab === tab ? "bg-black" : "bg-[#FFFCE2]"}
-            color={activeTab === tab ? "text-[#EDE7B5]" : "text-black"}
-            width="auto"
-            className="whitespace-nowrap !px-4 !py-1 text-md !rounded-3xl"
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </Button>
-        ))}
-      </Row>
+      {!selectedOrder && (
+        <Row gap="gap-2" className="px-3" justifyContent="between">
+          {["My cart", "Ongoing", "Completed"].map((tab) => (
+            <Button
+              key={tab}
+              backgroundColor={activeTab === tab ? "bg-black" : "bg-[#FFFCE2]"}
+              color={activeTab === tab ? "text-[#EDE7B5]" : "text-black"}
+              width="auto"
+              className="whitespace-nowrap !px-4 !py-1 text-md !rounded-3xl"
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </Button>
+          ))}
+        </Row>
+      )}
 
       <div>
-        {activeTab === "My cart" && (
+        {/* MY CART TAB */}
+        {activeTab === "My cart" && !selectedOrder && (
           <div className="px-3 py-4 mb-6">
             <h2 className="text-sm font-bold mb-4 font-sans">Order Summary</h2>
-
-            {/* Cart Items */}
             {cart && cart.items.length > 0 ? (
               <>
                 {cart.items.map((item, index) => (
@@ -195,14 +323,12 @@ export default function OrdersPage() {
                         height={68}
                         className="w-18 h-17 rounded-xl object-cover"
                       />
-
                       <div className="flex-1 flex flex-col justify-between min-w-0">
                         <div>
                           <h3 className="font-bold text-sm">{item.menuName}</h3>
                           <p className="text-xs text-gray-600">
                             {cart.vendorName}
                           </p>
-                          {/* Show selected options */}
                           {item.selectedOptions &&
                             item.selectedOptions.length > 0 && (
                               <p className="text-xs text-gray-500 mt-1">
@@ -212,7 +338,6 @@ export default function OrdersPage() {
                               </p>
                             )}
                         </div>
-
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => handleQuantityChange(index, -1)}
@@ -229,7 +354,6 @@ export default function OrdersPage() {
                           </button>
                         </div>
                       </div>
-
                       <div className="flex flex-col items-end justify-between">
                         <span className="font-bold text-sm">
                           ₦{item.totalPrice.toFixed(2)}
@@ -247,7 +371,6 @@ export default function OrdersPage() {
                   </div>
                 ))}
 
-                {/* Delivery Information */}
                 <Column gap="gap-4" className="mb-5">
                   <div>
                     <p className="text-sm font-medium mb-2">
@@ -261,22 +384,6 @@ export default function OrdersPage() {
                         value={deliveryLocation}
                         onChange={(e) => setDeliveryLocation(e.target.value)}
                         required
-                        icon={
-                          <svg
-                            className="w-5 h-5 text-gray-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 21s-6-5.686-6-10a6 6 0 1112 0c0 4.314-6 10-6 10z"
-                            />
-                            <circle cx="12" cy="11" r="2.5" strokeWidth={2} />
-                          </svg>
-                        }
                       />
                     </BaseFieldSet>
                   </div>
@@ -296,7 +403,6 @@ export default function OrdersPage() {
                   </div>
                 </Column>
 
-                {/* Add More Items */}
                 <div className="mb-5 mr-2">
                   <Button
                     className="w-full py-2 !bg-[#FFFCE2] !text-black !rounded-4xl font-medium text-sm"
@@ -308,7 +414,6 @@ export default function OrdersPage() {
 
                 <div className="w-full h-px bg-gray-400 opacity-30 mb-3"></div>
 
-                {/* Promo Code - Skip for now */}
                 <div className="mb-5">
                   <h2 className="text-sm font-bold mb-3">Discount Coupon</h2>
                   <Row className="space-x-3 mr-2">
@@ -330,7 +435,6 @@ export default function OrdersPage() {
 
                 <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
 
-                {/* Price Summary */}
                 <div className="space-y-2 mr-3">
                   <div className="flex justify-between items-center">
                     <span className="text-xs">Sub total</span>
@@ -353,7 +457,6 @@ export default function OrdersPage() {
                   </div>
                 </div>
 
-                {/* Checkout Button */}
                 <div className="px-4 py-3 flex-shrink-0">
                   <Button
                     className="w-full py-3 bg-black !text-[#EDE7B5] !rounded-4xl font-bold"
@@ -365,7 +468,6 @@ export default function OrdersPage() {
                 </div>
               </>
             ) : (
-              // Empty Cart
               <div className="text-center py-12">
                 <p className="text-gray-600 mb-4">Your cart is empty</p>
                 <Button
@@ -379,65 +481,206 @@ export default function OrdersPage() {
           </div>
         )}
 
-        {activeTab === "Ongoing" && (
-          <div>
-            <div className="px-4 py-3">
-              <h2 className="text-sm font-bold mb-2 font-sans">
-                Order details
-              </h2>
-            </div>
-            <Column>
-              {steps.map((step, index) => (
-                <Row
-                  key={index}
-                  className="flex space-x-3 items-center px-3 py-2"
-                >
-                  <span className="text-xs">{step.time}</span>
-                  <Image
-                    src={
-                      step.done
-                        ? images.icons.TrackingDarkIcon
-                        : images.icons.TickCircleIcon
-                    }
-                    alt="Status"
-                    width={13}
-                    height={13}
-                  />
-                  <span className="text-xs font-semibold font-medium">
-                    {step.label}
-                  </span>
-                </Row>
-              ))}
-            </Column>
+        {/* ONGOING TAB - ORDER LIST */}
+        {activeTab === "Ongoing" && !selectedOrder && (
+          <div className="px-3 py-4 mb-6 font-sans">
+            {ordersLoading ? (
+              <div className="text-center py-12">
+                <p className="text-xs text-gray-500">Loading orders...</p>
+              </div>
+            ) : ongoingOrders.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-sm">No ongoing orders</p>
+              </div>
+            ) : (
+              <Column gap="gap-4">
+                {ongoingOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="bg-[#FFFCE2] rounded-2xl p-4 mr-1"
+                  >
+                    <Row justifyContent="between">
+                      <h3 className="font-bold text-sm">{order.orderCode}</h3>
+                      <p className="text-xs">{formatTime(order.createdAt)}</p>
+                    </Row>
+                    <p className="text-xs opacity-70 mt-1 mb-2">
+                      {order.vendor.name}
+                    </p>
+                    <p className="text-xs font-medium mb-2">
+                      {order.orderItems
+                        .map(
+                          (item) => `${item.quantity}x ${item.menuItem.name}`,
+                        )
+                        .join(", ")}
+                    </p>
+                    <div className="flex justify-between items-center mt-3">
+                      <span className="font-bold text-sm">
+                        ₦{order.totalAmount.toLocaleString()}
+                      </span>
+                      <div
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          order.status === "PAID"
+                            ? "bg-blue-100 text-blue-700"
+                            : order.status === "CONFIRMED"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : order.status === "PREPARING"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {order.status}
+                      </div>
+                    </div>
+                    <Button
+                      className="w-full mt-3 !py-2 !bg-black !text-[#EDE7B5] !rounded-2xl text-xs"
+                      onClick={() => handleTrackOrder(order)}
+                    >
+                      Track Order
+                    </Button>
+                  </div>
+                ))}
+              </Column>
+            )}
           </div>
         )}
 
-        {activeTab === "Completed" && (
+        {/* TRACKING VIEW */}
+        {activeTab === "Ongoing" && selectedOrder && (
+          <div className="px-3 py-4 font-sans">
+            <div className="bg-[#FFFCE2] rounded-2xl p-4 mb-4">
+              <Row justifyContent="between">
+                <h3 className="font-bold text-sm">{selectedOrder.orderCode}</h3>
+                <p className="text-xs">
+                  {formatFullDate(selectedOrder.createdAt)}
+                </p>
+              </Row>
+              <p className="text-xs opacity-70 mt-1">
+                {selectedOrder.vendor.name}
+              </p>
+              <p className="text-xs font-medium mt-1">
+                {selectedOrder.orderItems
+                  .map((item) => `${item.quantity}x ${item.menuItem.name}`)
+                  .join(", ")}
+              </p>
+              <p className="font-bold text-sm mt-2">
+                ₦{selectedOrder.totalAmount.toLocaleString()}
+              </p>
+            </div>
+
+            <h2 className="text-sm font-bold mb-3">Order Tracking</h2>
+
+            {trackingLoading ? (
+              <p className="text-xs text-gray-500">Loading tracking info...</p>
+            ) : (
+              <TrackingTimeline
+                trackingData={trackingData}
+                currentStatus={selectedOrder.status}
+              />
+            )}
+          </div>
+        )}
+
+        {/* COMPLETED TAB - ORDER LIST */}
+        {activeTab === "Completed" && !selectedOrder && (
           <div className="font-sans px-3 py-3">
-            <Column gap="gap-4">
-              <div className="bg-[#FFFCE2] rounded-2xl p-4 mr-1">
-                <Row justifyContent="between">
-                  <h3 className="font-bold text-sm">#ORD-001</h3>
-                  <div>
-                    <p className="text-xs mb-3">10:00pm</p>
-                  </div>
-                </Row>
-
-                <Row>
-                  <p className="text-xs opacity-70 mb-3">Babcock Guest House</p>
-                </Row>
-
-                <Row>
-                  <p className="text-sm font-semibold mb-6">
-                    1x Jollof rice, 1x Tofu and 1x Coke
-                  </p>
-                </Row>
-
-                <Row justifyContent="between">
-                  <h3 className="font-bold text-sm">₦8.00</h3>
-                </Row>
+            {ordersLoading ? (
+              <div className="text-center py-12">
+                <p className="text-xs text-gray-500">Loading orders...</p>
               </div>
-            </Column>
+            ) : completedOrders.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-sm">No completed orders yet</p>
+              </div>
+            ) : (
+              <Column gap="gap-4">
+                {completedOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="bg-[#FFFCE2] rounded-2xl p-4 mr-1"
+                  >
+                    <Row justifyContent="between">
+                      <h3 className="font-bold text-sm">{order.orderCode}</h3>
+                      <p className="text-xs">{formatTime(order.createdAt)}</p>
+                    </Row>
+                    <p className="text-xs opacity-70 mt-1 mb-2">
+                      {order.vendor.name}
+                    </p>
+                    <p className="text-sm font-semibold mb-3">
+                      {order.orderItems
+                        .map(
+                          (item) => `${item.quantity}x ${item.menuItem.name}`,
+                        )
+                        .join(", ")}
+                    </p>
+                    <Row justifyContent="between">
+                      <h3 className="font-bold text-sm">
+                        ₦{order.totalAmount.toLocaleString()}
+                      </h3>
+                      <div
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          order.status === "DELIVERED"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {order.status}
+                      </div>
+                    </Row>
+                    <Button
+                      className="w-full mt-3 !py-2 !bg-[#FFFCE2] border border-gray-300 !text-black !rounded-2xl text-xs"
+                      onClick={() => handleTrackOrder(order)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                ))}
+              </Column>
+            )}
+          </div>
+        )}
+
+        {/* COMPLETED ORDER DETAILS VIEW */}
+        {activeTab === "Completed" && selectedOrder && (
+          <div className="px-3 py-4 font-sans">
+            <div className="bg-[#FFFCE2] rounded-2xl p-4 mb-4">
+              <Row justifyContent="between">
+                <h3 className="font-bold text-sm">{selectedOrder.orderCode}</h3>
+                <p className="text-xs">
+                  {formatFullDate(selectedOrder.createdAt)}
+                </p>
+              </Row>
+              <p className="text-xs opacity-70 mt-1">
+                {selectedOrder.vendor.name}
+              </p>
+              <p className="text-xs font-medium mt-1">
+                {selectedOrder.orderItems
+                  .map((item) => `${item.quantity}x ${item.menuItem.name}`)
+                  .join(", ")}
+              </p>
+              <p className="font-bold text-sm mt-2">
+                ₦{selectedOrder.totalAmount.toLocaleString()}
+              </p>
+              <div
+                className={`text-xs px-2 py-1 rounded-full inline-block mt-2 ${
+                  selectedOrder.status === "DELIVERED"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {selectedOrder.status}
+              </div>
+            </div>
+
+            <h2 className="text-sm font-bold mb-3">Order Timeline</h2>
+
+            {trackingLoading ? (
+              <p className="text-xs text-gray-500">Loading details...</p>
+            ) : (
+              <TrackingTimeline
+                trackingData={trackingData}
+                currentStatus={selectedOrder.status}
+              />
+            )}
           </div>
         )}
       </div>

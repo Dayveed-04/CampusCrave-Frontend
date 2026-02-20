@@ -1,17 +1,27 @@
+
+
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const payOrder = async (orderId, payment) => {
+export const deleteMenu = async (menuId) => {
   try {
     const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    if (!menuId) {
+      throw new Error("Menu ID is required");
+    }
+
     const response = await fetch(
-      `${BASE_ENDPOINT}/api/payments/orders/${orderId}/pay`,
+      `${BASE_ENDPOINT}/api/vendors/menusforvendor/${menuId}`,
       {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payment),
       },
     );
 
@@ -19,7 +29,7 @@ export const payOrder = async (orderId, payment) => {
 
     if (!response.ok) {
       console.error("Error:", res);
-      throw new Error(res.message || "Failed to fetch categories");
+      throw new Error(res.message || "Failed to delete menu");
     }
 
     return res;

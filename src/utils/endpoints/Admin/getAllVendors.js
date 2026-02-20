@@ -1,9 +1,9 @@
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const fetchAllOrders = async () => {
+export const getAllVendors = async () => {
   try {
     const token = sessionStorage.getItem("token");
-    const response = await fetch(`${BASE_ENDPOINT}/api/admin/orders`, {
+    const response = await fetch(`${BASE_ENDPOINT}/api/admin/vendors`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

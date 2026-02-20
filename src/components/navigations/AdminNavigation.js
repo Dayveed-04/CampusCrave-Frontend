@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { images } from '@/constants/image';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { images } from "@/constants/image";
 
 const AdminNavigation = () => {
   const pathname = usePathname();
 
   const navItems = [
     {
-      name: 'Home',
-      href: '/vendor/dashboard',
+      name: "Home",
+      href: "/admin/dashboard",
       icon: images.icons.HomeIcon,
     },
     {
-      name: 'Vetting',
-      href: '/vendor/orders',
+      name: "Vetting",
+      href: "/admin/vetting",
       icon: images.icons.OrderIcon,
     },
     {
-      name: 'Profile',
-      href: '/vendor/profile',
+      name: "Profile",
+      href: "/admin/profile",
       icon: images.icons.ProfileIcon,
     },
   ];
@@ -31,21 +31,19 @@ const AdminNavigation = () => {
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
-          
+
           return (
             <Link
               key={item.name}
               href={item.href}
               className={`flex flex-col items-center justify-center flex-1 h-full space-y-1 ${
-                isActive 
-                  ? 'text-black' 
-                  : 'text-gray-600'
+                isActive ? "text-black" : "text-gray-600"
               }`}
             >
-              <img 
-                src={item.icon} 
-                alt={`${item.name} icon`} 
-                className={`w-6 h-6 ${isActive ? 'filter brightness-0 saturate-100' : 'opacity-60'}`} 
+              <img
+                src={item.icon}
+                alt={`${item.name} icon`}
+                className={`w-6 h-6 ${isActive ? "filter brightness-0 saturate-100" : "opacity-60"}`}
               />
 
               <span className="text-xs font-medium">{item.name}</span>

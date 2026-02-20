@@ -11,15 +11,17 @@ import Toast from "@/components/toast";
 import { images } from "@/constants/image";
 import { useToast } from "@/hooks/useToast";
 import { fetchCategories } from "@/utils/endpoints/Category/getCategories";
+import { updateMenu } from "@/utils/endpoints/Vendors/updateMenu";
+import { getVendorMenu } from "@/utils/endpoints/Vendors/getVendorMenu";
+import { uploadImageToCloudinary } from "@/utils/services/cloudinary";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { uploadImageToCloudinary } from "@/utils/services/cloudinary";
-import { createMenu } from "@/utils/endpoints/Vendors/createMenu";
 
-export default function VendorAddMenu() {
+export default function VendorEditMenu() {
   const router = useRouter();
+  const { id } = useParams();
   const { toast, showToast, hideToast } = useToast();
   const fileInputRef = useRef(null);
 
@@ -42,41 +44,81 @@ export default function VendorAddMenu() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Load categories
+  // Load categories and existing menu data
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetchCategories();
-        if (response.status && response.data.categories) {
-          setCategories(response.data.categories);
-        } else if (Array.isArray(response)) {
-          setCategories(response);
+
+        // Fetch categories and existing menu data in parallel
+        const [categoriesResponse, menuResponse] = await Promise.all([
+          fetchCategories(),
+          getVendorMenu(id),
+        ]);
+
+        // Set categories
+        if (categoriesResponse.status && categoriesResponse.data.categories) {
+          setCategories(categoriesResponse.data.categories);
+        } else if (Array.isArray(categoriesResponse)) {
+          setCategories(categoriesResponse);
+        }
+
+        // Pre-fill form with existing menu data
+        if (menuResponse.status === "success") {
+          const menu = menuResponse.data.menu;
+
+          setFormData({
+            name: menu.name || "",
+            description: menu.description || "",
+            basePrice: menu.basePrice || "",
+            imageUrl: menu.imageUrl || "",
+            available: menu.available ?? true,
+            categoryId: menu.categoryId || null,
+          });
+
+          // Set image preview from existing URL
+          if (menu.imageUrl) {
+            setImagePreview(menu.imageUrl);
+          }
+
+          // Map existing option groups to component format
+          if (menu.optionGroups && menu.optionGroups.length > 0) {
+            const mappedGroups = menu.optionGroups.map((group) => ({
+              id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              groupName: group.name,
+              isRequired: group.required,
+              allowMultiple: false,
+              items: group.options.map((opt) => ({
+                id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                name: opt.name,
+                price: opt.price,
+              })),
+            }));
+            setOptionGroups(mappedGroups);
+          }
         }
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
-        showToast("Failed to load categories", "error");
+        console.error("Failed to load menu data:", error);
+        showToast("Failed to load menu data", "error");
       } finally {
         setLoading(false);
       }
     };
 
-    loadCategories();
-  }, []);
+    if (id) loadData();
+  }, [id]);
 
   // Handle image file selection
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       showToast("Only JPEG, PNG, and WebP images are allowed", "error");
       return;
     }
 
-    // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       showToast("Image size must be less than 10MB", "error");
@@ -85,7 +127,6 @@ export default function VendorAddMenu() {
 
     setImageFile(file);
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
@@ -93,52 +134,54 @@ export default function VendorAddMenu() {
     reader.readAsDataURL(file);
   };
 
-  // Handle image upload area click
   const handleImageAreaClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Handle form field changes
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Handle category selection
   const handleCategorySelect = (categoryId) => {
-    setFormData((prev) => ({
-      ...prev,
-      categoryId,
-    }));
+    setFormData((prev) => ({ ...prev, categoryId }));
   };
-  const validateForm = () => {
-    // ... (keep name, price, description, category, image checks)
 
-    // Validate option groups (ONLY if there are any)
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      showToast("Meal name is required", "warning");
+      return false;
+    }
+    if (!formData.basePrice || parseFloat(formData.basePrice) <= 0) {
+      showToast("A valid price is required", "warning");
+      return false;
+    }
+    if (!formData.description.trim()) {
+      showToast("Description is required", "warning");
+      return false;
+    }
+    if (!formData.categoryId) {
+      showToast("Please select a category", "warning");
+      return false;
+    }
+    if (!formData.imageUrl && !imageFile) {
+      showToast("Please upload a meal image", "warning");
+      return false;
+    }
+
     if (optionGroups && optionGroups.length > 0) {
       for (const group of optionGroups) {
-        // Check group has a name
         if (!group.groupName || !group.groupName.trim()) {
-          // ← Changed to groupName
           showToast("All option groups must have a name", "warning");
           return false;
         }
-
-        // Check group has items
         if (!group.items || group.items.length === 0) {
-          // ← Changed to items
           showToast(
             `Option group "${group.groupName}" must have at least one option`,
             "warning",
           );
           return false;
         }
-
-        // Check each item
         for (const item of group.items) {
-          // ← Changed to items
           if (!item.name || !item.name.trim()) {
             showToast(
               `All options in "${group.groupName}" must have a name`,
@@ -164,7 +207,6 @@ export default function VendorAddMenu() {
     return true;
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
@@ -173,7 +215,7 @@ export default function VendorAddMenu() {
     try {
       let imageUrl = formData.imageUrl;
 
-      // Upload image if file is selected
+      // Upload new image only if a new file was selected
       if (imageFile) {
         setUploading(true);
         showToast("Uploading image...", "info");
@@ -188,7 +230,6 @@ export default function VendorAddMenu() {
         setUploading(false);
       }
 
-      // Prepare menu data
       const menuData = {
         name: formData.name.trim(),
         description: formData.description.trim(),
@@ -197,37 +238,41 @@ export default function VendorAddMenu() {
         available: formData.available,
         categoryId: formData.categoryId,
         optionGroups: optionGroups.map((group) => ({
-          name: group.groupName.trim(), // ← Changed to groupName
-          required: group.isRequired, // ← Changed to isRequired
+          name: group.groupName.trim(),
+          required: group.isRequired,
           options: group.items.map((item) => ({
-            // ← Changed to items
             name: item.name.trim(),
             price: parseFloat(item.price),
           })),
         })),
       };
 
-      // Create menu
-      const response = await createMenu(menuData);
+      const response = await updateMenu(menuData, id);
 
       if (response.status === "success") {
-        showToast("✓ Menu created successfully!", "success");
-
-        // Redirect to menus list after delay
+        showToast("✓ Menu updated successfully!", "success");
         setTimeout(() => {
           router.push("/vendor/menu");
         }, 1500);
       } else {
-        throw new Error("Failed to create menu");
+        throw new Error("Failed to update menu");
       }
     } catch (error) {
-      console.error("Error creating menu:", error);
-      showToast(error.message || "Failed to create menu", "error");
+      console.error("Error updating menu:", error);
+      showToast(error.message || "Failed to update menu", "error");
     } finally {
       setSubmitting(false);
       setUploading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center font-sans">
+        <p className="text-sm text-gray-500">Loading menu...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen font-sans">
@@ -255,7 +300,7 @@ export default function VendorAddMenu() {
           />
         </div>
         <h2 className="text-2xl font-semibold text-center w-full text-base font-sans">
-          Add a Meal
+          Edit Meal
         </h2>
       </div>
       <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
@@ -357,9 +402,7 @@ export default function VendorAddMenu() {
         <h2 className="font-bold px-4">Meal Category *</h2>
         <div className="bg-[#FFFFFF] rounded-2xl p-2 m-3">
           <Column gap="gap-3" className="items-center px-3 py-2">
-            {loading ? (
-              <p className="text-xs">Loading categories...</p>
-            ) : categories.length > 0 ? (
+            {categories.length > 0 ? (
               categories.map((cat) => (
                 <div
                   key={cat.id}
@@ -417,8 +460,8 @@ export default function VendorAddMenu() {
             {uploading
               ? "Uploading Image..."
               : submitting
-                ? "Creating Menu..."
-                : "Add Meal to Menu"}
+                ? "Saving Changes..."
+                : "Save Edited Menu"}
           </Button>
         </div>
       </Column>

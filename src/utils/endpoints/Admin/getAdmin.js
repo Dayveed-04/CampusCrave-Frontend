@@ -1,9 +1,9 @@
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const fetchAllOrders = async () => {
+export const getAdmin = async () => {
   try {
     const token = sessionStorage.getItem("token");
-    const response = await fetch(`${BASE_ENDPOINT}/api/admin/orders`, {
+    const response = await fetch(`${BASE_ENDPOINT}/api/admin/dashboard`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -15,7 +15,7 @@ export const fetchAllOrders = async () => {
 
     if (!response.ok) {
       console.error("Error:", res);
-      throw new Error(res.message || "Failed to fetch all orders");
+      throw new Error(res.message || "Failed to get student");
     }
 
     return res;
