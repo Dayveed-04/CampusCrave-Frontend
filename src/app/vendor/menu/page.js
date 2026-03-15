@@ -181,7 +181,7 @@ export default function VendorManageMenu() {
           {/* Category Tabs */}
           <Row
             gap="gap-2"
-            className="overflow-x-auto pb-2"
+            className="overflow-x-auto pb-2 scrollbar-hidden"
             justifyContent="start"
           >
             {categories.map((category) => (

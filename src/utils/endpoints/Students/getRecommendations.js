@@ -1,10 +1,10 @@
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const verifyPayment = async (reference) => {
+export const getRecommendations = async () => {
   try {
     const token = sessionStorage.getItem("token");
     const response = await fetch(
-      `${BASE_ENDPOINT}/api/payments/verify/${reference}`,
+      `${BASE_ENDPOINT}/api/recommendations/dashboard`,
       {
         method: "GET",
         headers: {
@@ -27,3 +27,4 @@ export const verifyPayment = async (reference) => {
     throw error;
   }
 };
+

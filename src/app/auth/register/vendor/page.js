@@ -81,7 +81,7 @@ export default function VendorRegister() {
       };
 
       const response = await vendorRegister(authDetails);
-      if (response.status === "success" && response.data) {
+      if (response.status === "success") {
         router.push("/auth/login");
       } else {
         setError("Registration failed. Please try again.");

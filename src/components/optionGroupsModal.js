@@ -1,13 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { useState } from "react";
+import { X, Plus, Trash2 } from "lucide-react";
 
-export default function OptionGroupsInline({
-  optionGroups,
-  setOptionGroups
-}) {
-
+export default function OptionGroupsInline({ optionGroups, setOptionGroups }) {
   function generateId() {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
@@ -18,69 +14,69 @@ export default function OptionGroupsInline({
       ...optionGroups,
       {
         id: generateId(),
-        groupName: '',
+        groupName: "",
         isRequired: true,
         allowMultiple: false,
-        items: [{ id: generateId(), name: '', price: 0 }]
-      }
+        items: [{ id: generateId(), name: "", price: 0 }],
+      },
     ]);
   };
 
   // Remove an option group
   const removeOptionGroup = (groupId) => {
-    setOptionGroups(optionGroups.filter(group => group.id !== groupId));
+    setOptionGroups(optionGroups.filter((group) => group.id !== groupId));
   };
 
   // Update group field
   const updateGroup = (groupId, field, value) => {
     setOptionGroups(
-      optionGroups.map(group =>
-        group.id === groupId ? { ...group, [field]: value } : group
-      )
+      optionGroups.map((group) =>
+        group.id === groupId ? { ...group, [field]: value } : group,
+      ),
     );
   };
 
   // Add item to a group
   const addItemToGroup = (groupId) => {
     setOptionGroups(
-      optionGroups.map(group =>
+      optionGroups.map((group) =>
         group.id === groupId
           ? {
               ...group,
-              items: [...group.items, { id: generateId(), name: '', price: 0 }]
+              items: [...group.items, { id: generateId(), name: "", price: 0 }],
             }
-          : group
-      )
+          : group,
+      ),
     );
   };
 
   // Remove item from a group
   const removeItemFromGroup = (groupId, itemId) => {
     setOptionGroups(
-      optionGroups.map(group =>
+      optionGroups.map((group) =>
         group.id === groupId
           ? {
               ...group,
-              items: group.items.filter(item => item.id !== itemId)
+              items: group.items.filter((item) => item.id !== itemId),
             }
-          : group
-      )
+          : group,
+      ),
     );
   };
 
   // Update item in a group
   const updateItem = (groupId, itemId, field, value) => {
     setOptionGroups(
-      optionGroups.map(group =>
+      optionGroups.map((group) =>
         group.id === groupId
           ? {
               ...group,
-              items: group.items.map(item =>
-                item.id === itemId ? { ...item, [field]: value } : item
-              )
+              items: group.items.map((item) =>
+                item.id === itemId ? { ...item, [field]: value } : item,
+              ),
             }
-          : group
-      )
+          : group,
+      ),
     );
   };
 
@@ -89,7 +85,7 @@ export default function OptionGroupsInline({
       {/* Option Groups Header with Add Button */}
       <div className="flex items-center justify-between">
         <h2 className="font-bold">Option Groups</h2>
-        <div 
+        <div
           className="bg-[#000000] text-white rounded-full px-3 py-2 cursor-pointer"
           onClick={addOptionGroup}
         >
@@ -107,13 +103,12 @@ export default function OptionGroupsInline({
       ) : (
         <div className="space-y-4">
           {optionGroups.map((group, groupIndex) => (
-            <div
-              key={group.id}
-              className="bg-white rounded-2xl p-4 space-y-4"
-            >
+            <div key={group.id} className="bg-white rounded-2xl p-4 space-y-4">
               {/* Group Header */}
               <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-                <h3 className="font-semibold text-sm">Group {groupIndex + 1}</h3>
+                <h3 className="font-semibold text-sm">
+                  Group {groupIndex + 1}
+                </h3>
                 {optionGroups.length > 1 && (
                   <button
                     onClick={() => removeOptionGroup(group.id)}
@@ -134,7 +129,7 @@ export default function OptionGroupsInline({
                   placeholder="Choose Protein"
                   value={group.groupName}
                   onChange={(e) =>
-                    updateGroup(group.id, 'groupName', e.target.value)
+                    updateGroup(group.id, "groupName", e.target.value)
                   }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
@@ -150,7 +145,7 @@ export default function OptionGroupsInline({
                     <input
                       type="radio"
                       checked={group.isRequired}
-                      onChange={() => updateGroup(group.id, 'isRequired', true)}
+                      onChange={() => updateGroup(group.id, "isRequired", true)}
                       className="w-4 h-4 cursor-pointer accent-gray-800"
                     />
                     <span className="text-xs">Required</span>
@@ -159,7 +154,9 @@ export default function OptionGroupsInline({
                     <input
                       type="radio"
                       checked={!group.isRequired}
-                      onChange={() => updateGroup(group.id, 'isRequired', false)}
+                      onChange={() =>
+                        updateGroup(group.id, "isRequired", false)
+                      }
                       className="w-4 h-4 cursor-pointer accent-gray-800"
                     />
                     <span className="text-xs">Optional</span>
@@ -177,7 +174,9 @@ export default function OptionGroupsInline({
                     <input
                       type="radio"
                       checked={!group.allowMultiple}
-                      onChange={() => updateGroup(group.id, 'allowMultiple', false)}
+                      onChange={() =>
+                        updateGroup(group.id, "allowMultiple", false)
+                      }
                       className="w-4 h-4 cursor-pointer accent-gray-800"
                     />
                     <span className="text-xs">Single Choice</span>
@@ -186,7 +185,9 @@ export default function OptionGroupsInline({
                     <input
                       type="radio"
                       checked={group.allowMultiple}
-                      onChange={() => updateGroup(group.id, 'allowMultiple', true)}
+                      onChange={() =>
+                        updateGroup(group.id, "allowMultiple", true)
+                      }
                       className="w-4 h-4 cursor-pointer accent-gray-800"
                     />
                     <span className="text-xs">Multiple Choices</span>
@@ -207,7 +208,7 @@ export default function OptionGroupsInline({
                         placeholder="Tofu"
                         value={item.name}
                         onChange={(e) =>
-                          updateItem(group.id, item.id, 'name', e.target.value)
+                          updateItem(group.id, item.id, "name", e.target.value)
                         }
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                       />
@@ -220,13 +221,13 @@ export default function OptionGroupsInline({
                           placeholder="2.00"
                           step="0.01"
                           min="0"
-                          value={item.price || ''}
+                          value={item.price || ""}
                           onChange={(e) =>
                             updateItem(
                               group.id,
                               item.id,
-                              'price',
-                              parseFloat(e.target.value) || 0
+                              "price",
+                              parseFloat(e.target.value) || 0,
                             )
                           }
                           className="w-full pl-6 pr-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
@@ -235,7 +236,7 @@ export default function OptionGroupsInline({
                       {group.items.length > 1 && (
                         <button
                           onClick={() => removeItemFromGroup(group.id, item.id)}
-                          className="w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded-full hover:bg-red-50 hover:border-red-300 transition"
+                          className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded-full hover:bg-red-50 hover:border-red-300 transition"
                         >
                           <X size={16} className="text-gray-600" />
                         </button>

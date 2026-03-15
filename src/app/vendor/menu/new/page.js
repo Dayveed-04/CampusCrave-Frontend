@@ -303,7 +303,7 @@ export default function VendorAddMenu() {
             <div className="text-center">
               <h3 className="font-bold text-sm pb-1">Upload Meal Photo</h3>
               <p className="text-xs opacity-70 pb-4">
-                Tap to select or drag a high quality image of the dish
+                Click here to upload image 
               </p>
             </div>
           </Column>

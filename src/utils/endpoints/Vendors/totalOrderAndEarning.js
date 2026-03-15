@@ -1,10 +1,10 @@
 import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
-export const verifyPayment = async (reference) => {
+export const totalVendorOrder = async () => {
   try {
     const token = sessionStorage.getItem("token");
     const response = await fetch(
-      `${BASE_ENDPOINT}/api/payments/verify/${reference}`,
+      `${BASE_ENDPOINT}/api/vendors/menusforvendor/total`,
       {
         method: "GET",
         headers: {
@@ -18,7 +18,7 @@ export const verifyPayment = async (reference) => {
 
     if (!response.ok) {
       console.error("Error:", res);
-      throw new Error(res.message || "Failed to fetch categories");
+      throw new Error(res.message || "Failed to get Vendor");
     }
 
     return res;

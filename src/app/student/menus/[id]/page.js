@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,12 +8,12 @@ import { Row } from "@/components/flex";
 import { CheckButton } from "@/components/checkButton";
 import { images } from "@/constants/image";
 import Image from "next/image";
-
 import { addToCart, clearCart } from "@/utils/services/cartManagement";
 import ConfirmModal from "@/components/confirmModal";
 import { useToast } from "@/hooks/useToast";
 import { getAMenu } from "@/utils/endpoints/Students/getAMenu";
 import Toast from "@/components/toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function StudentVendorsMenu() {
   const params = useParams();
@@ -35,11 +36,9 @@ export default function StudentVendorsMenu() {
         setLoading(false);
         return;
       }
-
       try {
         setLoading(true);
         const response = await getAMenu(menuId);
-
         if (response.success) {
           setMenu(response.data);
         } else {
@@ -52,68 +51,52 @@ export default function StudentVendorsMenu() {
         setLoading(false);
       }
     };
-
     fetchMenu();
   }, [menuId]);
 
-  // Handle option selection
   const handleOptionToggle = (optionGroupId, optionId, isRequired) => {
     setSelectedOptions((prev) => {
       const newSelections = { ...prev };
-
-      // Get current selections for this group (create NEW array to avoid mutation)
       const currentSelections = newSelections[optionGroupId]
-        ? [...newSelections[optionGroupId]] // ← Copy the array!
+        ? [...newSelections[optionGroupId]]
         : [];
-
-      // Check if option is already selected
       const index = currentSelections.indexOf(optionId);
-
       if (index > -1) {
-        // Remove if already selected
         currentSelections.splice(index, 1);
-
-        // Remove key if array is empty
         if (currentSelections.length === 0) {
           delete newSelections[optionGroupId];
         } else {
-          newSelections[optionGroupId] = currentSelections; // ← Assign new array
+          newSelections[optionGroupId] = currentSelections;
         }
       } else {
-        // Add if not selected
         currentSelections.push(optionId);
-        newSelections[optionGroupId] = currentSelections; // ← Assign new array
+        newSelections[optionGroupId] = currentSelections;
       }
-
       return newSelections;
     });
   };
 
   const calculateTotal = () => {
     if (!menu) return 0;
-
     let total = menu.basePrice * quantity;
-
     Object.entries(selectedOptions).forEach(([groupId, optionIds]) => {
       const group = menu.optionGroups.find((g) => g.id === parseInt(groupId));
       if (group) {
         optionIds.forEach((optionId) => {
           const option = group.options.find((o) => o.id === optionId);
-          if (option) {
-            total += option.price * quantity;
-          }
+          if (option) total += option.price * quantity;
         });
       }
     });
-
     return total;
   };
+
   const handleQuantityChange = (change) => {
     setQuantity((prev) => Math.max(1, prev + change));
   };
+
   const canAddToCart = () => {
     if (!menu) return false;
-
     const requiredGroups = menu.optionGroups.filter((g) => g.required);
     return requiredGroups.every(
       (group) =>
@@ -121,22 +104,16 @@ export default function StudentVendorsMenu() {
     );
   };
 
-  // Handle vendor conflict confirmation
   const handleVendorConflictConfirm = () => {
     if (!vendorConflict) return;
-
     clearCart();
     const retryResult = addToCart(vendorConflict.cartItem);
-
     if (retryResult.success) {
       showToast("✓ Added to cart!", "success");
-      setTimeout(() => {
-        router.push("/student/orders");
-      }, 1500);
+      setTimeout(() => router.push("/student/orders"), 1500);
     } else {
       showToast(retryResult.message || "Failed to add to cart", "error");
     }
-
     setVendorConflict(null);
     setAddingToCart(false);
   };
@@ -146,22 +123,17 @@ export default function StudentVendorsMenu() {
     setAddingToCart(false);
   };
 
-  // Handle add to cart
   const handleAddToCart = () => {
     if (!menu) {
       showToast("Menu data not loaded", "error");
       return;
     }
-
     if (!canAddToCart()) {
       showToast("Please select all required options", "warning");
       return;
     }
-
     setAddingToCart(true);
-
     try {
-      // Build cart item
       const selectedOptionsArray = [];
       Object.entries(selectedOptions).forEach(([groupId, optionIds]) => {
         const group = menu.optionGroups.find((g) => g.id === parseInt(groupId));
@@ -176,7 +148,6 @@ export default function StudentVendorsMenu() {
           });
         });
       });
-
       const cartItem = {
         menuId: menu.id,
         menuName: menu.name,
@@ -188,19 +159,11 @@ export default function StudentVendorsMenu() {
         selectedOptions: selectedOptionsArray,
         totalPrice: calculateTotal(),
       };
-
-      // Add to cart
       const result = addToCart(cartItem);
-
       if (result.success) {
         showToast("✓ Added to cart!", "success");
-
-        // Navigate to cart after a short delay
-        setTimeout(() => {
-          router.push("/student/orders");
-        }, 1500);
+        setTimeout(() => router.push("/student/orders"), 1500);
       } else if (result.isVendorConflict) {
-        // Show vendor conflict modal
         setVendorConflict({
           currentVendor: result.currentVendor,
           newVendor: result.newVendor,
@@ -222,7 +185,11 @@ export default function StudentVendorsMenu() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <motion.div
+            className="rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
           <p className="text-gray-600">Loading menu...</p>
         </div>
       </div>
@@ -242,8 +209,13 @@ export default function StudentVendorsMenu() {
   }
 
   return (
-    <div className="min-h-screen font-sans">
-      {/* Toast Notification */}
+    <motion.div
+      className="min-h-screen font-sans"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Toast */}
       {toast && (
         <Toast
           message={toast.message}
@@ -267,7 +239,12 @@ export default function StudentVendorsMenu() {
       />
 
       {/* Header */}
-      <div className="w-full flex flex-row mt-4">
+      <motion.div
+        className="w-full flex flex-row mt-4"
+        initial={{ opacity: 0, y: -15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div
           className="text-black self-start cursor-pointer justify-between"
           onClick={() => router.back()}
@@ -282,8 +259,9 @@ export default function StudentVendorsMenu() {
         <h2 className="text-2xl font-semibold text-center w-full mr-6 text-base">
           {menu?.vendor?.name || "Vendor"}
         </h2>
-        <div
+        <motion.div
           className="text-black cursor-pointer pr-3"
+          whileTap={{ scale: 0.85 }}
           onClick={() => router.push("/student/orders")}
         >
           <Image
@@ -292,57 +270,92 @@ export default function StudentVendorsMenu() {
             width={25}
             height={25}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <div className="w-full h-px bg-gray-400 opacity-30 mb-4"></div>
 
       {/* Menu Item Details */}
-      <div className="px-3 mb-1">
+      <motion.div
+        className="px-3 mb-1"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
         <div className="flex gap-3">
-          <Image
-            src={menu.imageUrl || images.jollofRice}
-            alt={menu.name}
-            width={112}
-            height={104}
-            className="w-28 h-26 rounded-3xl object-cover"
-          />
+          {/* Image zoom in on load */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+          >
+            <Image
+              src={menu.imageUrl || images.jollofRice}
+              alt={menu.name}
+              width={112}
+              height={104}
+              className="w-28 h-26 rounded-3xl object-cover"
+            />
+          </motion.div>
+
           <div className="flex-1 flex flex-col justify-between min-w-0">
             <div>
               <h3 className="font-bold text-medium">{menu.name}</h3>
               <p className="text-xs text-gray-600">{menu.description}</p>
               <div className="flex justify-between items-center">
-                <h3 className="py-3 font-bold text-medium">
+                <motion.h3
+                  className="py-3 font-bold text-medium"
+                  key={calculateTotal()}
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
                   ₦{menu.basePrice.toFixed(2)}
-                </h3>
+                </motion.h3>
                 <div className="flex items-center gap-3">
-                  <button
+                  <motion.button
                     onClick={() => handleQuantityChange(-1)}
                     className="!w-5 !h-5 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400"
+                    whileTap={{ scale: 0.85 }}
                   >
                     −
-                  </button>
-                  <span className="text-xs">{quantity}</span>
-                  <button
+                  </motion.button>
+                  <motion.span
+                    key={quantity}
+                    className="text-xs"
+                    initial={{ scale: 1.3, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {quantity}
+                  </motion.span>
+                  <motion.button
                     onClick={() => handleQuantityChange(1)}
                     className="!w-5 !h-5 !rounded-full !border !border-gray-400 !flex !items-center !justify-center !text-xs bg-transparent !text-gray-400"
+                    whileTap={{ scale: 0.85 }}
                   >
                     +
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="w-full h-px bg-gray-500 opacity-30 mb-1"></div>
 
       {/* Option Groups */}
       {menu.optionGroups &&
         menu.optionGroups.length > 0 &&
-        menu.optionGroups.map((group) => (
-          <div key={group.id} className="mb-4">
+        menu.optionGroups.map((group, groupIndex) => (
+          <motion.div
+            key={group.id}
+            className="mb-4"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 + groupIndex * 0.08 }}
+          >
             <h3 className="px-3 py-1 font-bold text-xs flex items-center gap-2">
               <span>{group.name}</span>
               {group.required && (
@@ -352,43 +365,72 @@ export default function StudentVendorsMenu() {
               )}
             </h3>
             <div className="bg-[#FFFCE2]">
-              {group.options.map((option) => (
-                <Row
+              {group.options.map((option, optIndex) => (
+                <motion.div
                   key={option.id}
-                  className="items-center px-3 py-2"
-                  justifyContent="between"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: 0.25 + groupIndex * 0.08 + optIndex * 0.04,
+                  }}
                 >
-                  <span className="text-xs">{option.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium">
-                      +₦{option.price.toFixed(2)}
-                    </span>
-                    <div
-                      className="cursor-pointer"
-                      onClick={() =>
-                        handleOptionToggle(group.id, option.id, group.required)
-                      }
-                    >
-                      <CheckButton
-                        selected={selectedOptions[group.id]?.includes(
-                          option.id,
-                        )}
-                      />
+                  <Row
+                    className="items-center px-3 py-2"
+                    justifyContent="between"
+                  >
+                    <span className="text-xs">{option.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium">
+                        +₦{option.price.toFixed(2)}
+                      </span>
+                      <motion.div
+                        className="cursor-pointer"
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() =>
+                          handleOptionToggle(
+                            group.id,
+                            option.id,
+                            group.required,
+                          )
+                        }
+                      >
+                        <CheckButton
+                          selected={selectedOptions[group.id]?.includes(
+                            option.id,
+                          )}
+                        />
+                      </motion.div>
                     </div>
-                  </div>
-                </Row>
+                  </Row>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
 
       {/* Footer */}
       <div className="w-full h-px opacity-30 bg-gray-400"></div>
-      <div className="flex justify-between items-center px-2 py-2">
-        <h2 className="px-3 py-1 font-bold text-medium">
+      <motion.div
+        className="flex justify-between items-center px-2 py-2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
+        {/* Total price animates when it changes */}
+        <motion.h2
+          className="px-3 py-1 font-bold text-medium"
+          key={calculateTotal()}
+          initial={{ scale: 1.08, color: "#000000" }}
+          animate={{ scale: 1, color: "#000000" }}
+          transition={{ duration: 0.25, type: "spring" }}
+        >
           Total: ₦{calculateTotal().toFixed(2)}
-        </h2>
-        <div>
+        </motion.h2>
+        <motion.div
+          whileTap={{ scale: canAddToCart() ? 0.95 : 1 }}
+          whileHover={{ scale: canAddToCart() ? 1.03 : 1 }}
+        >
           <Button
             onClick={handleAddToCart}
             disabled={!canAddToCart() || addingToCart}
@@ -396,8 +438,8 @@ export default function StudentVendorsMenu() {
           >
             {addingToCart ? "Adding..." : "Add to Cart"}
           </Button>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -6,14 +6,17 @@ import { Column, Row } from "@/components/flex";
 import { SearchBar } from "@/components/searchBar";
 import { images } from "@/constants/image";
 import Image from "next/image";
+import { fetchCategories } from "@/utils/endpoints/Category/getCategories";
 import { getAllMenus } from "@/utils/endpoints/Students/getAllMenus";
+import Button from "@/components/button";
 
 export default function StudentAllVendorsMenu() {
   const router = useRouter();
 
-  // State
   const [menuItems, setMenuItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,7 +40,24 @@ export default function StudentAllVendorsMenu() {
       }
     };
 
+    const loadCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchCategories();
+        if (response.status && response.data.categories) {
+          setCategories(response.data.categories);
+        } else if (Array.isArray(response)) {
+          setCategories(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadMenus();
+    loadCategories();
   }, []);
 
   // Handle search
@@ -59,6 +79,33 @@ export default function StudentAllVendorsMenu() {
 
     setFilteredItems(filtered);
   };
+  useEffect(() => {
+    let filtered = menuItems;
+
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(
+        (item) => item.category?.id === selectedCategory.id,
+      );
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(
+        (item) =>
+          item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.vendor?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          item.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()),
+      );
+    }
+
+    setFilteredItems(filtered);
+  }, [menuItems, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen font-sans pb-20">
@@ -98,6 +145,36 @@ export default function StudentAllVendorsMenu() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
+        {/* Categories */}
+        <Row
+          gap="gap-3 sm:gap-4"
+          className="overflow-x-auto pb-2 scrollbar-hidden"
+        >
+          {loading ? (
+            <p className="text-xs text-gray-500">Loading categories...</p>
+          ) : categories.length > 0 ? (
+            categories.map((cat) => (
+              <Button
+                key={cat.id}
+                backgroundColor={
+                  selectedCategory?.id === cat.id ? "bg-black" : "bg-white"
+                }
+                color={
+                  selectedCategory?.id === cat.id
+                    ? "text-[#EDE7B5]"
+                    : "text-black"
+                }
+                width="auto"
+                className="whitespace-nowrap px-4 sm:px-5 !py-1 text-xs sm:text-sm !rounded-3xl flex-shrink-0"
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat.name}
+              </Button>
+            ))
+          ) : (
+            <p className="text-xs text-gray-500">No categories available</p>
+          )}
+        </Row>
 
         {/* Results Count */}
         {!loading && !error && (

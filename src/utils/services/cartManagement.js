@@ -99,8 +99,7 @@ export const addToCart = (item) => {
 
 /**
  * Update item quantity in cart
- */
-export const updateCartItemQuantity = (itemIndex, newQuantity) => {
+ */ export const updateCartItemQuantity = (itemIndex, newQuantity) => {
   try {
     const cart = getCart();
     if (!cart || !cart.items[itemIndex]) {
@@ -111,7 +110,17 @@ export const updateCartItemQuantity = (itemIndex, newQuantity) => {
       return { success: false, message: "Quantity must be at least 1" };
     }
 
-    cart.items[itemIndex].quantity = newQuantity;
+    const item = cart.items[itemIndex];
+
+    // Recalculate totalPrice based on new quantity
+    const optionsTotal = item.selectedOptions.reduce(
+      (sum, opt) => sum + (opt.price || 0),
+      0,
+    );
+
+    item.quantity = newQuantity;
+    item.totalPrice = (item.basePrice + optionsTotal) * newQuantity;
+
     saveCart(cart);
     return { success: true, message: "Quantity updated" };
   } catch (error) {
@@ -119,7 +128,6 @@ export const updateCartItemQuantity = (itemIndex, newQuantity) => {
     return { success: false, message: "Failed to update quantity" };
   }
 };
-
 /**
  * Remove item from cart
  */
