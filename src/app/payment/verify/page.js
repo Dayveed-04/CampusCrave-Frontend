@@ -10,7 +10,6 @@ function VerifyPaymentContent() {
   const reference = searchParams.get("reference") || searchParams.get("trxref");
 
   const [status, setStatus] = useState("verifying"); // verifying | success | error
-
   useEffect(() => {
     const verify = async () => {
       if (!reference) {
@@ -18,20 +17,31 @@ function VerifyPaymentContent() {
         return;
       }
 
-      try {
-        const response = await verifyPayment(reference);
-        if (response.status === "success") {
-          setStatus("success");
-          setTimeout(() => {
-            router.push("/student/orders?tab=Ongoing");
-          }, 2000);
-        } else {
-          setStatus("error");
+      const maxAttempts = 5;
+      const delayMs = 3000; // wait 3 seconds between each attempt
+
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const response = await verifyPayment(reference);
+          if (response.status === "success") {
+            setStatus("success");
+            setTimeout(() => {
+              router.push("/student/orders?tab=Ongoing");
+            }, 2000);
+            return; // stop retrying
+          }
+        } catch (error) {
+          console.error(`Verification attempt ${attempt} failed:`, error);
         }
-      } catch (error) {
-        console.error("Verification failed:", error);
-        setStatus("error");
+
+        // If not the last attempt, wait before retrying
+        if (attempt < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
       }
+
+      // All attempts failed
+      setStatus("error");
     };
 
     verify();
