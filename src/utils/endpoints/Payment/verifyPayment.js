@@ -2,7 +2,8 @@ import { BASE_ENDPOINT } from "@/utils/baseEndpoint";
 
 export const verifyPayment = async (reference) => {
   try {
-    const token = sessionStorage.getItem("token");
+    const token =
+      localStorage.getItem("payment_token") || sessionStorage.getItem("token");
     const response = await fetch(
       `${BASE_ENDPOINT}/api/payments/verify/${reference}`,
       {

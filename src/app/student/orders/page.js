@@ -235,6 +235,7 @@ export default function OrdersPage() {
       )
         throw new Error("Failed to initiate payment");
       clearCart();
+      localStorage.setItem("payment_token", sessionStorage.getItem("token"));
       window.location.href = paymentResponse.data.authorizationUrl;
     } catch (error) {
       console.error("Checkout error:", error);

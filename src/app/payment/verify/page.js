@@ -24,6 +24,7 @@ function VerifyPaymentContent() {
         try {
           const response = await verifyPayment(reference);
           if (response.status === "success") {
+            localStorage.removeItem("payment_token");
             setStatus("success");
             setTimeout(() => {
               router.push("/student/orders?tab=Ongoing");
