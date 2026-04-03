@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![allMenu](https://github.com/user-attachments/assets/ee484ebc-daea-425b-944c-c52521d93541)This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
@@ -49,13 +49,14 @@ Features
 ### Dashboard
 <img src="https://github.com/user-attachments/assets/222be8ba-51d9-4ad9-a6e8-bb77bf91e37d" width="300" alt="Dashboard" />
 
-Menu
+### Menu
+<img src="https://github.com/user-attachments/assets/7e5719bf-90fb-4c86-81e5-6dd521704f46" width="300" alt="Menu" />
 
-Cart & Checkout
+#### Cart & Checkout
+<img src="https://github.com/user-attachments/assets/e2614f78-d5d8-499b-982e-78aa624171d4" width="300" alt="Cart and Checkout" />
 
-
-Order Tracking
-
+### Order Tracking
+<img src="https://github.com/user-attachments/assets/53df9412-bbf6-4da4-b7ba-fcfc97208abe" width="300" alt="Order Tracking" />
 
 Tech Stack
 
