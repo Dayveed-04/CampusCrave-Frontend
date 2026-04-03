@@ -46,9 +46,8 @@ Features
 📱 PWA Support — Installable on mobile devices, works like a native app
 🔐 Auth — JWT-based login for students and vendors
 
-
-Dashboard
-![studentDashboard](https://github.com/user-attachments/assets/222be8ba-51d9-4ad9-a6e8-bb77bf91e37d)
+### Dashboard
+<img src="https://github.com/user-attachments/assets/222be8ba-51d9-4ad9-a6e8-bb77bf91e37d" width="300" alt="Dashboard" />
 
 Menu
 
