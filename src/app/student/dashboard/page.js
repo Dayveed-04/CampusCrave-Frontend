@@ -304,7 +304,7 @@ export default function StudentDashboard() {
                     }}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => router.push(`/student/menu/${item.id}`)}
+                    onClick={() => router.push(`/student/menus/${item.id}`)}
                   >
                     <Column gap="gap-2 sm:gap-3">
                       <div className="w-full rounded-xl sm:rounded-2xl overflow-hidden h-28 sm:h-36 md:h-40">
