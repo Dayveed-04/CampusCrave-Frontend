@@ -1,34 +1,39 @@
+# CampusCrave Frontend
 
+CampusCrave is a Progressive Web App (PWA) that enables students to browse meals from campus vendors, place orders, make secure payments, track deliveries in real time, and receive personalized food recommendations.
+
+## Features
+
+- Personalized food recommendations
+- Browse meals by category
+- Shopping cart and checkout
+- Paystack payment integration
+- Real-time order tracking
+- JWT authentication
+- Responsive PWA
+
+## Tech Stack
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Express.js
+- PostgreSQL
+- Prisma
+- Paystack
+
+## Getting Started
 
 ```bash
+git clone https://github.com/Dayveed-04/CampusCrave-Frontend.git
+
+cd CampusCrave-Frontend
+
+npm install
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-
-
-
-
-
-CampusCrave Frontend
-The student-facing web app for CampusCrave — a food recommendation and ordering system for tertiary institutions. Built with Next.js and designed as a Progressive Web App (PWA).
-
-Overview
-CampusCrave allows students to browse food menus, get personalized food recommendations, place orders, and track them in real time — all from their mobile device or browser.
-
-Features
-
-🍽️ Food Recommendations — Personalized menu suggestions based on order history
-🛒 Cart & Checkout — Add items, set delivery location, and pay with Paystack
-📦 Order Tracking — Real-time order status timeline
-💳 Payment Integration — Seamless Paystack payment with instant verification
-📱 PWA Support — Installable on mobile devices, works like a native app
-🔐 Auth — JWT-based login for students and vendors
 
 ### Dashboard
 <img src="https://github.com/user-attachments/assets/222be8ba-51d9-4ad9-a6e8-bb77bf91e37d" width="300" alt="Dashboard" />
